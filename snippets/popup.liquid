@@ -1,0 +1,55 @@
+<div id="ouibounce-modal">
+  <div class="underlay"></div> 
+  <div class="modal">
+    <div class="rt_model">
+    <button class="rt_btn" onclick="document.getElementById('ouibounce-modal').style.display = 'none';">X</button>
+    <img src="https://cdn.shopify.com/s/files/1/0282/9493/8729/t/2/assets/large-POP-UP_Email.jpg?v=1582656439" alt="popup" />
+      <div class="modal-bodys">
+        {% form 'customer' %}
+          <form method="post" action="/contact#contact_form" id="contact_form" accept-charset="UTF-8" class="contact-form" tabindex="-1">
+            <input type="text" placeholder="Email" name="contact[email]" class="input-group__field" required>
+            <button type="submit" class="btn--newsletter__submit">
+              Sign Up
+            </button>
+          </form>
+          {% if form.posted_successfully? %}
+            <script>
+              document.location.href = "/products/free-sample";
+            </script>
+          {% endif %}
+        {% endform %}
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+.modal-bodys {
+    position: absolute;
+    z-index: 999;
+    top: 60%;
+    right: 0;
+    transform: translate(-56%, -50%);
+}
+.modal-bodys form#contact_form {
+    display: flex;
+    align-items: flex-start;
+}
+.modal-bodys form#contact_form>input {
+    width: 125px;
+    font-size: 10px;
+    height: 40px;
+    padding: 0 2px;
+}
+.modal-bodys form#contact_form button {
+    background: #fff;
+    width: 63px;
+    margin-left: 2px;
+    color: #000;
+    font-size: 10px;
+    height: 39px;
+    margin-top: 0.80px;
+}
+</style>

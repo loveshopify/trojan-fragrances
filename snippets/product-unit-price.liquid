@@ -1,0 +1,24 @@
+{%- unless available -%}
+  {%- if variant.title -%}
+    {%- assign available = variant.available -%}
+  {%- else -%}
+    {%- assign available = true -%}
+  {%- endif -%}
+{%- endunless -%}
+
+<span class="product-price-unit{% unless available and variant.unit_price_measurement %} product-price-unit--unavailable {% endunless %}" data-unit-price-container>
+  {%- capture unit_price_separator -%}
+    <span aria-hidden="true">/</span><span class="visually-hidden">&nbsp;{{ 'general.accessibility.unit_price_separator' | t }}&nbsp;</span>
+  {%- endcapture -%}
+
+  {%- capture unit_price_base_unit -%}
+    <span data-unit-price-base-unit>
+      {%- if variant.unit_price_measurement.reference_value != 1 -%}
+        {{- variant.unit_price_measurement.reference_value -}}
+      {%- endif -%}
+      {{ variant.unit_price_measurement.reference_unit }}
+    </span>
+  {%- endcapture -%}
+  <span class="visually-hidden">{{ 'products.product.unit_price' | t }}</span>
+  <span data-unit-price>{{ variant.unit_price | money }}</span>{{- unit_price_separator -}}{{- unit_price_base_unit -}}
+</span>

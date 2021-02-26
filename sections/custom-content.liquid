@@ -1,0 +1,3421 @@
+<style>
+  .custom-content-wrapper--{{ section.id }} .custom-content__section-header  {
+    color: {{ section.settings.heading_color }};
+  }
+
+  {% if section.settings.background_color != blank %}
+    .custom-content-wrapper--{{ section.id }} {
+      background-color: {{ section.settings.background_color }};
+    }
+  {% endif %}
+</style>
+
+<div class="custom-content-wrapper custom-content-wrapper--{{ section.id }} {% if section.settings.top_margin %}custom-content-wrapper--top-margin{% endif %} {% if section.settings.bottom_margin %}custom-content-wrapper--bottom-margin{% endif %} one-whole" data-section-id="{{ section.id }}" data-section-type="custom-content">
+  <div class="page-width">
+    {% if section.settings.heading_text != blank %}
+      <h2 class="custom-content__section-header text-center">{{ section.settings.heading_text | escape }}</h2>
+    {% endif %}
+
+    <div class="custom-content">
+      {% for block in section.blocks %}
+        {% case block.settings.width %}
+          {% when '25%' %}
+            {%- assign block_width = 'medium-up--one-quarter' -%}
+          {% when '33%' %}
+            {%- assign block_width = 'medium-up--one-third' -%}
+          {% when '50%' %}
+            {%- assign block_width = 'medium-up--one-half' -%}
+          {% when '66%' %}
+            {%- assign block_width = 'medium-up--two-thirds' -%}
+          {% when '75%' %}
+            {%- assign block_width = 'medium-up--three-quarters' -%}
+          {% when '100%' %}
+            {%- assign block_width = 'one-whole' -%}
+        {% endcase %}
+        <div class="custom__item custom__item--{{ block.id }} small--one-whole {{ block_width }} {% if block.settings.alignment %}align--{{ block.settings.alignment }}{% endif %}" {{ block.shopify_attributes }}>
+          <div class="custom__item-inner custom__item-inner--{{ block.type }}">
+            {% case block.type %}
+              {% when 'image' %}
+
+                {% comment %}
+                  Custom Image Block
+                {% endcomment %}
+
+                {% if block.settings.image != blank %}
+                  <div class="custom__block-image-container" style="padding-top:{{ 1 | divided_by: block.settings.image.aspect_ratio | times: 100}}%">
+                    {% assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+                    <img class="custom__block-image lazyload"
+                        data-src="{{ img_url }}"
+                        data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                        data-aspectratio="{{ block.settings.image.aspect_ratio }}"
+                        data-sizes="auto"
+                        alt="{{ block.settings.image.alt | escape }}">
+
+                    <noscript>
+                      <img src="{{ block.settings.image | img_url: '1024x1024' }}" alt="{{ block.settings.image.alt | escape }}" class="custom__block-image">
+                    </noscript>
+                  </div>
+                {% else %}
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                {% endif %}
+
+              {% when 'text' %}
+
+                {% comment %}
+                  Custom Text Block
+                {% endcomment %}
+                <style>
+                  .custom-content-wrapper--{{ section.id }} .custom__item--{{ block.id }} .custom__block-heading-text {
+                    color: {{ block.settings.heading_color }};
+                  }
+
+                  .custom-content-wrapper--{{ section.id }} .custom__item--{{ block.id }} .custom__block-body-text {
+                    color: {{ block.settings.paragraph_color }};
+                    font-size: {{ block.settings.paragraph_size | append: 'em' }};
+                  }
+                </style>
+
+
+                <div class="text-{{ block.settings.align_text }}">
+                  {% if block.settings.heading_text != blank %}
+                    <h2 class="custom__block-heading-text {{ block.settings.heading_style }}">{{ block.settings.heading_text | escape }}</h2>
+                  {% endif %}
+                  {% if block.settings.paragraph_text != blank %}
+                    <div class="custom__block-body-text rte-setting">{{ block.settings.paragraph_text }}</div>
+                  {% endif %}
+                </div>
+              {% when 'video' %}
+
+                {% comment %}
+                  Custom Video Block
+                {% endcomment %}
+                <div class="video-wrapper">
+                  {% if block.settings.video_url == blank %}
+                    <iframe src="//www.youtube.com/embed/_9VUPq3SxOc?rel=0&showinfo=0&vq=720" width="850" height="480" frameborder="0" allowfullscreen></iframe>
+                  {% else %}
+                    {% if block.settings.video_url.type == "youtube" %}
+                      <iframe src="//www.youtube.com/embed/{{ block.settings.video_url.id }}?rel=0&showinfo=0&vq=720" width="850" height="480" frameborder="0" allowfullscreen></iframe>
+                    {% endif %}
+                    {% if block.settings.video_url.type == "vimeo" %}
+                      <iframe src="//player.vimeo.com/video/{{ block.settings.video_url.id }}?byline=0&portrait=0&badge=0" width="850" height="480" frameborder="0" allowfullscreen></iframe>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              {% when 'product' %}
+
+                {% comment %}
+                  Custom Product Block
+                {% endcomment %}
+
+                {%- assign product = all_products[block.settings.product] -%}
+
+                {% if product.title.size > 0 %}
+                  <a href="{{ product.url }}" class="card__wrapper text-center{% if block.settings.show_spacing %} card__wrapper--padding{% endif %}">
+
+                    {% if product.featured_image != blank %}
+                      <div class="card__image-wrapper"  style="padding-top:{{ 1 | divided_by: product.featured_image.aspect_ratio | times: 100}}%">
+                        {% assign img_url = product.featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+                        <img class="card__image lazyload fade-in"
+                            data-src="{{ img_url }}"
+                            data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                            data-aspectratio="{{ product.featured_image.aspect_ratio }}"
+                            data-sizes="auto"
+                            alt="{{ product.featured_image.alt | escape }}">
+
+                        <noscript>
+                          <img src="{{ product.featured_image.src | img_url: '1024x1024' }}" alt="{{ product.featured_image.alt | escape }}" class="card__image">
+                        </noscript>
+                      </div>
+                    {% endif %}
+
+                    <div class="card__info">
+                      <div class="card__brand">{{ product.vendor }}</div>
+                      <div class="card__name h4">{{ product.title }}</div>
+
+                      <div class="card__price">
+                        {% if product.compare_at_price > product.price %}
+                          {% comment %}
+                            Product is on sale
+                          {% endcomment %}
+                          {% if product.price_varies %}
+                            {% assign sale_price = product.price | money_without_trailing_zeros %}
+                            {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                          {% else %}
+                            <span class="visually-hidden">{{ 'products.product.sale_price' | t }}</span>
+                            <span class="card__price--sale">{{ product.price | money_without_trailing_zeros }}</span>
+
+                            <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+                            <span class="card__price--regular-strike">
+                              <span class="card__price--regular">{{ product.compare_at_price | money_without_trailing_zeros }}</span>
+                            </span>
+                          {% endif %}
+
+                        {% else %}
+                          {% comment %}
+                            Not on sale, but could still have varying prices
+                          {% endcomment %}
+                          {% if product.price_varies %}
+                            {% assign price = product.price | money_without_trailing_zeros %}
+                            {{ 'products.product.from_text_html' | t: price: price }}
+                          {% else %}
+                            {{ product.price | money_without_trailing_zeros }}
+                          {% endif %}
+
+                        {% endif %}
+                      </div>
+                    </div>
+                  </a>
+                {% else %}
+                  {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                  {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+
+                  <div class="card__info">
+                    <div class="card__brand">{{ 'homepage.onboarding.product_vendor' | t }}</div>
+                    <div class="card__name h4">{{ 'homepage.onboarding.product_title' | t }}</div>
+                    <div class="card__price">$19.99</div>
+                  </div>
+                {% endif %}
+              {% when 'collection' %}
+
+                {% comment %}
+                  Custom Collection Block
+                {% endcomment %}
+
+                {%- assign collection = collections[block.settings.collection] -%}
+
+                {% unless collection == empty %}
+                  <a href="{{ collection.url }}" class="card__wrapper text-center">
+
+                    {% if collection.image %}
+                      {% assign collection_image = collection.image %}
+                    {% else %}
+                      {% assign collection_image = collection.products.first %}
+                    {% endif %}
+
+                    {% if collection_image != blank %}
+                      <div class="card__image-wrapper" style="padding-top:{{ 1 | divided_by: collection_image.aspect_ratio | times: 100}}%">
+                        {% assign img_url = collection_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+                        <img class="card__image lazyload fade-in"
+                            data-src="{{ img_url }}"
+                            data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                            data-aspectratio="{{ collection_image.aspect_ratio }}"
+                            data-sizes="auto"
+                            alt="{{ collection_image.alt | escape }}">
+
+                        <noscript>
+                          <img src="{{ collection_image | img_url: '1024x1024' }}" alt="{{ collection_image.alt | escape }}" class="card__image">
+                        </noscript>
+                      </div>
+                    {% endif %}
+
+                    <div class="card__info">
+                      <div class="card__name h4">{{ collection.title }}</div>
+                      {% if section.settings.show_description and collection.description != blank %}
+                        <div class="rte card__description">
+                          {{ collection.description | strip_html | truncatewords: 15 }}
+                        </div>
+                      {% endif %}
+                    </div>
+                  </a>
+                {% else %}
+                  {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                  {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+
+                  <div class="card__info">
+                    <div class="card__name h4">{{ 'homepage.onboarding.collection_title' | t }}</div>
+                  </div>
+                {% endunless %}
+              {% when 'html' %}
+                {% if block.settings.code != blank %}
+                  {{ block.settings.code }}
+                {% endif %}
+            {% endcase %}
+          </div>
+        </div>
+
+      {% endfor %}
+    </div>
+
+    {% if section.blocks.size == 0 %}
+      {% include 'no-blocks' %}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": {
+    "da": "Tilpasset indhold",
+    "de": "Personalisierter Content",
+    "en": "Custom content",
+    "es": "Contenido personalizado",
+    "fi": "Mukautettu sisältö",
+    "fr": "Contenu personnalisé",
+    "hi": "कस्टम सामग्री",
+    "it": "Contenuto personalizzato",
+    "ja": "コンテンツをカスタムする",
+    "ko": "사용자 지정 콘텐츠",
+    "ms": "Kandungan tersuai",
+    "nb": "Tilpasset innhold",
+    "nl": "Aangepaste inhoud",
+    "pt-BR": "Conteúdo personalizado",
+    "pt-PT": "Conteúdo personalizado",
+    "sv": "Anpassat innehåll",
+    "th": "เนื้อหาแบบกำหนดเอง",
+    "zh-CN": "自定义内容",
+    "zh-TW": "自訂內容"
+  },
+  "class": "index-section index-section--custom-content",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": {
+        "da": "Overskrift",
+        "de": "Titel",
+        "en": "Heading",
+        "es": "Título",
+        "fi": "Otsake",
+        "fr": "Titre",
+        "hi": "शीर्षक",
+        "it": "Heading",
+        "ja": "見出し",
+        "ko": "제목",
+        "ms": "Tajuk",
+        "nb": "Overskrift",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "pt-PT": "Título",
+        "sv": "Rubrik",
+        "th": "ส่วนหัว",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "da": "Tilpasset indhold",
+        "de": "Personalisierter Content",
+        "en": "Custom content",
+        "es": "Contenido personalizado",
+        "fi": "Mukautettu sisältö",
+        "fr": "Contenu personnalisé",
+        "hi": "कस्टम सामग्री",
+        "it": "Contenuto personalizzato",
+        "ja": "コンテンツをカスタムする",
+        "ko": "사용자 지정 콘텐츠",
+        "ms": "Kandungan tersuai",
+        "nb": "Tilpasset innhold",
+        "nl": "Aangepaste inhoud",
+        "pt-BR": "Conteúdo personalizado",
+        "pt-PT": "Conteúdo personalizado",
+        "sv": "Anpassat innehåll",
+        "th": "เนื้อหาแบบกำหนดเอง",
+        "zh-CN": "自定义内容",
+        "zh-TW": "自訂內容"
+      }
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": {
+        "da": "Farve på overskriften",
+        "de": "Überschriftenfarbe",
+        "en": "Heading color",
+        "es": "Color del título",
+        "fi": "Otsikon väri",
+        "fr": "Couleur de titre",
+        "hi": "शीर्षक का रंग",
+        "it": "Colore titolo",
+        "ja": "見出しの色",
+        "ko": "제목 색상",
+        "ms": "Warna kepala",
+        "nb": "Overskriftsfarge",
+        "nl": "Kopkleur",
+        "pt-BR": "Cor do título",
+        "pt-PT": "Cor do título",
+        "sv": "Rubrikfärg",
+        "th": "สีหัวเรื่อง",
+        "zh-CN": "标题颜色",
+        "zh-TW": "標題顏色"
+      },
+      "default": "#3a3a3a"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": {
+        "da": "Baggrundsfarve",
+        "de": "Hintergrundfarbe",
+        "en": "Background color",
+        "es": "Color de fondo",
+        "fi": "Taustaväri",
+        "fr": "Couleur de fond",
+        "hi": "पृष्ठभूमि का रंग",
+        "it": "Colore sfondo",
+        "ja": "背景の色",
+        "ko": "배경색",
+        "ms": "Warna latar belakang",
+        "nb": "Bakgrunnsfarge",
+        "nl": "Achtergrondkleur",
+        "pt-BR": "Cor do fundo",
+        "pt-PT": "Cor do fundo",
+        "sv": "Bakgrundsfärg",
+        "th": "สีพื้นหลัง",
+        "zh-CN": "背景色",
+        "zh-TW": "背景顏色"
+      }
+    },
+    {
+      "type": "checkbox",
+      "id": "top_margin",
+      "label": {
+        "da": "Øverste margen",
+        "de": "Oberer Rand",
+        "en": "Top margin",
+        "es": "Margen superior",
+        "fi": "Yläreunus",
+        "fr": "Marge supérieure",
+        "hi": "ऊपरी मार्जिन",
+        "it": "Margine superiore",
+        "ja": "上マージン",
+        "ko": "상단 마진",
+        "ms": "Margin atas",
+        "nb": "Toppmarg",
+        "nl": "Bovenmarge",
+        "pt-BR": "Margem superior",
+        "pt-PT": "Margem superior",
+        "sv": "Toppmarginal",
+        "th": "ย่อหน้าบน",
+        "zh-CN": "上边距",
+        "zh-TW": "上方邊界"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "bottom_margin",
+      "label": {
+        "da": "Nederste margen",
+        "de": "Unterer Rand",
+        "en": "Bottom margin",
+        "es": "Margen inferior",
+        "fi": "Alareunus",
+        "fr": "Marge inférieure",
+        "hi": "निचली मार्जिन",
+        "it": "Margine inferiore",
+        "ja": "下マージン",
+        "ko": "하단 마진",
+        "ms": "Margin bawah",
+        "nb": "Bunnmarg",
+        "nl": "Ondermarge",
+        "pt-BR": "Margem inferior",
+        "pt-PT": "Margem inferior",
+        "sv": "Bottenmarginal",
+        "th": "ย่อหน้าล่าง",
+        "zh-CN": "下边距",
+        "zh-TW": "下方邊界"
+      },
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": {
+        "da": "Tekst",
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fi": "Teksti",
+        "fr": "Texte",
+        "hi": "टेक्स्ट",
+        "it": "Testo",
+        "ja": "テキスト",
+        "ko": "텍스트",
+        "ms": "Teks",
+        "nb": "Tekst",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "pt-PT": "Texto",
+        "sv": "Text",
+        "th": "ข้อความ",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      },
+      "settings": [
+        {
+          "type": "header",
+          "content": {
+            "da": "Overskrift",
+            "de": "Titel",
+            "en": "Heading",
+            "es": "Título",
+            "fi": "Otsake",
+            "fr": "Titre",
+            "hi": "शीर्षक",
+            "it": "Heading",
+            "ja": "見出し",
+            "ko": "제목",
+            "ms": "Tajuk",
+            "nb": "Overskrift",
+            "nl": "Kop",
+            "pt-BR": "Título",
+            "pt-PT": "Título",
+            "sv": "Rubrik",
+            "th": "ส่วนหัว",
+            "zh-CN": "标题",
+            "zh-TW": "標題"
+          }
+        },
+        {
+          "type": "text",
+          "id": "heading_text",
+          "label": {
+            "da": "Tekst",
+            "de": "Text",
+            "en": "Text",
+            "es": "Texto",
+            "fi": "Teksti",
+            "fr": "Texte",
+            "hi": "टेक्स्ट",
+            "it": "Testo",
+            "ja": "テキスト",
+            "ko": "텍스트",
+            "ms": "Teks",
+            "nb": "Tekst",
+            "nl": "Tekst",
+            "pt-BR": "Texto",
+            "pt-PT": "Texto",
+            "sv": "Text",
+            "th": "ข้อความ",
+            "zh-CN": "文本",
+            "zh-TW": "文字"
+          },
+          "default": {
+            "da": "Fortæl om dit brand",
+            "de": "Über Ihre Marke sprechen",
+            "en": "Talk about your brand",
+            "es": "Habla de tu marca",
+            "fi": "Kerro brändistäsi",
+            "fr": "Parlez de votre marque",
+            "hi": "अपने ब्रांड के बारे में बात करें",
+            "it": "Parla del tuo brand",
+            "ja": "あなたのブランドについて語る",
+            "ko": "브랜드에 대해 이야기하기",
+            "ms": "Bercakap tentang jenama anda",
+            "nb": "Snakk om merkevaren din",
+            "nl": "Vertel over je merk",
+            "pt-BR": "Fale sobre a sua marca",
+            "pt-PT": "Fale sobre a sua marca",
+            "sv": "Prata om ditt varumärke",
+            "th": "พูดถึงแบรนด์ของคุณ",
+            "zh-CN": "介绍您的品牌",
+            "zh-TW": "描述您的品牌"
+          }
+        },
+        {
+          "type": "color",
+          "id": "heading_color",
+          "label": {
+            "da": "Farve",
+            "de": "Farbe",
+            "en": "Color",
+            "es": "Color",
+            "fi": "Väri",
+            "fr": "Couleur",
+            "hi": "रंग",
+            "it": "Colore",
+            "ja": "色",
+            "ko": "색상",
+            "ms": "Warna",
+            "nb": "Farge",
+            "nl": "Kleur",
+            "pt-BR": "Cor",
+            "pt-PT": "Cor",
+            "sv": "Färg",
+            "th": "สี",
+            "zh-CN": "颜色",
+            "zh-TW": "顏色"
+          },
+          "default": "#3a3a3a"
+        },
+        {
+          "type": "select",
+          "id": "heading_style",
+          "label": {
+            "da": "Stil",
+            "de": "Stil",
+            "en": "Style",
+            "es": "Estilo",
+            "fi": "Tyyli",
+            "fr": "Style",
+            "hi": "अंदाज",
+            "it": "Stile",
+            "ja": "スタイル",
+            "ko": "스타일",
+            "ms": "Gaya",
+            "nb": "Stil",
+            "nl": "Stijl",
+            "pt-BR": "Estilo",
+            "pt-PT": "Estilo",
+            "sv": "Stil",
+            "th": "สไตล์",
+            "zh-CN": "样式",
+            "zh-TW": "樣式"
+          },
+          "default": "h3",
+          "options": [
+            {
+              "value": "h1",
+              "label": {
+                "da": "Overskrift 1",
+                "de": "Überschrift 1",
+                "en": "Heading 1",
+                "es": "Título 1",
+                "fi": "Otsake 1",
+                "fr": "Titre 1",
+                "hi": "शीर्षक 1",
+                "it": "Titolo 1",
+                "ja": "見出し1",
+                "ko": "제목 1",
+                "ms": "Tajuk 1",
+                "nb": "Overskrift 1",
+                "nl": "Kop 1",
+                "pt-BR": "Título 1",
+                "pt-PT": "Título 1",
+                "sv": "Rubrik 1",
+                "th": "ส่วนหัว 1",
+                "zh-CN": "标题 1",
+                "zh-TW": "標題 1"
+              }
+            },
+            {
+              "value": "h2",
+              "label": {
+                "da": "Overskrift 2",
+                "de": "Überschrift 2",
+                "en": "Heading 2",
+                "es": "Título 2",
+                "fi": "Otsake 2",
+                "fr": "Titre 2",
+                "hi": "शीर्षक 2",
+                "it": "Titolo 2",
+                "ja": "見出し2",
+                "ko": "제목 2",
+                "ms": "Tajuk 2",
+                "nb": "Overskrift 2",
+                "nl": "Kop 2",
+                "pt-BR": "Título 2",
+                "pt-PT": "Título 2",
+                "sv": "Rubrik 2",
+                "th": "ส่วนหัว 2",
+                "zh-CN": "标题 2",
+                "zh-TW": "標題 2"
+              }
+            },
+            {
+              "value": "h3",
+              "label": {
+                "da": "Overskrift 3",
+                "de": "Überschrift 3",
+                "en": "Heading 3",
+                "es": "Título 3",
+                "fi": "Otsake 3",
+                "fr": "Titre 3",
+                "hi": "शीर्षक 3",
+                "it": "Titolo 3",
+                "ja": "見出し3",
+                "ko": "제목 3",
+                "ms": "Tajuk 3",
+                "nb": "Overskrift 3",
+                "nl": "Kop 3",
+                "pt-BR": "Título 3",
+                "pt-PT": "Título 3",
+                "sv": "Rubrik 3",
+                "th": "ส่วนหัว 3",
+                "zh-CN": "标题 3",
+                "zh-TW": "標題 3"
+              }
+            },
+            {
+              "value": "h4",
+              "label": {
+                "da": "Udgiftsområde 4",
+                "de": "Überschrift 4",
+                "en": "Heading 4",
+                "es": "Título 4",
+                "fi": "Otsake 4",
+                "fr": "Titre 4",
+                "hi": "शीर्षक 4",
+                "it": "Titolo 4",
+                "ja": "見出し4",
+                "ko": "제목 4",
+                "ms": "Tajuk 4",
+                "nb": "Overskrift 4",
+                "nl": "Kop 4",
+                "pt-BR": "Título 4",
+                "pt-PT": "Título 4",
+                "sv": "Rubrik 4",
+                "th": "ส่วนหัว 4",
+                "zh-CN": "标题 4",
+                "zh-TW": "標題 4"
+              }
+            },
+            {
+              "value": "h5",
+              "label": {
+                "da": "Overskrift 5",
+                "de": "Überschrift 5",
+                "en": "Heading 5",
+                "es": "Título 5",
+                "fi": "Otsake 5",
+                "fr": "Titre 5",
+                "hi": "शीर्षक 5",
+                "it": "Titolo 5",
+                "ja": "見出し5",
+                "ko": "제목 5",
+                "ms": "Tajuk 5",
+                "nb": "Overskrift 5",
+                "nl": "Kop 5",
+                "pt-BR": "Título 5",
+                "pt-PT": "Título 5",
+                "sv": "Rubrik 5",
+                "th": "ส่วนหัว 5",
+                "zh-CN": "标题 5",
+                "zh-TW": "標題 5"
+              }
+            },
+            {
+              "value": "h6",
+              "label": {
+                "da": "Overskrift 6",
+                "de": "Überschrift 6",
+                "en": "Heading 6",
+                "es": "Título 6",
+                "fi": "Otsake 6",
+                "fr": "Titre 6",
+                "hi": "शीर्षक 6",
+                "it": "Titolo 6",
+                "ja": "見出し6",
+                "ko": "제목 6",
+                "ms": "Tajuk 6",
+                "nb": "Overskrift 6",
+                "nl": "Kop 6",
+                "pt-BR": "Título 6",
+                "pt-PT": "Título 6",
+                "sv": "Rubrik 6",
+                "th": "ส่วนหัว 6",
+                "zh-CN": "标题 6",
+                "zh-TW": "標題 6"
+              }
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": {
+            "da": "Afsnit",
+            "de": "Absatz",
+            "en": "Paragraph",
+            "es": "Párrafo",
+            "fi": "Kohta",
+            "fr": "Paragraphe",
+            "hi": "अनुच्छेद",
+            "it": "Paragrafo",
+            "ja": "段落",
+            "ko": "단락",
+            "ms": "Perenggan",
+            "nb": "Avsnitt",
+            "nl": "Paragraaf",
+            "pt-BR": "Parágrafo",
+            "pt-PT": "Parágrafo",
+            "sv": "Stycke",
+            "th": "ย่อหน้า",
+            "zh-CN": "段落",
+            "zh-TW": "段落"
+          }
+        },
+        {
+          "type": "richtext",
+          "id": "paragraph_text",
+          "label": {
+            "da": "Tekst",
+            "de": "Text",
+            "en": "Text",
+            "es": "Texto",
+            "fi": "Teksti",
+            "fr": "Texte",
+            "hi": "टेक्स्ट",
+            "it": "Testo",
+            "ja": "テキスト",
+            "ko": "텍스트",
+            "ms": "Teks",
+            "nb": "Tekst",
+            "nl": "Tekst",
+            "pt-BR": "Texto",
+            "pt-PT": "Texto",
+            "sv": "Text",
+            "th": "ข้อความ",
+            "zh-CN": "文本",
+            "zh-TW": "文字"
+          },
+          "default": {
+            "da": "<p>Brug denne tekst til at dele oplysninger om dit brand med dine kunder. Beskriv et produkt, del meddelelser, eller byd kunder velkommen til din butik.</p>",
+            "de": "<p>Nutzen Sie diesen Text, um Infos über Ihre Marke mitzuteilen. Beschreiben Sie ein Produkt, kündigen Sie etwas an oder heißen Sie Kunden willkommen.</p>",
+            "en": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>",
+            "es": "<p>Usa este texto para compartir información sobre tu marca con tus clientes. Describe un producto, comparte anuncios o recibe clientes en tu tienda.</p>",
+            "fi": "<p>Tämän tekstin avulla voit jakaa brändiäsi koskevia tietoja asiakkaille. Kuvaile tuotetta, jaa ilmoituksia tai toivota asiakkaat tervetulleiksi kauppaasi.</p>",
+            "fr": "<p>Utilisez ce texte pour partager des informations sur votre marque. Décrivez un produit, partagez des annonces, ou souhaitez la bienvenue à vos clients.</p>",
+            "hi": "<p>अपने ग्राहकों के साथ अपने ब्रांड के बारे में जानकारी शेयर करने के लिए इस टेक्स्ट का उपयोग करें. उत्पाद का वर्णन करें, घोषणाओं को शेयर करें या अपने स्टोर में ग्राहकों का स्वागत करें.</p>",
+            "it": "<p>Utilizza questo testo per condividere le informazioni sul tuo brand con i tuoi clienti. Descrivi un prodotto, condividi gli annunci o dai il benvenuto ai clienti nel tuo negozio.</p>",
+            "ja": "<p>このテキストを使用して、あなたのブランドに関する情報をお客様と共有します。商品を説明したり、告知の共有をしたり、あるいはストアのお客様を歓迎します。</p>",
+            "ko": "<p>이 텍스트를 사용하여 고객과 브랜드에 대한 정보를 공유하십시오. 제품 설명, 공지 사항 공유 또는 고객의 스토어 방문을 환영합니다.</p>",
+            "ms": "<p>Gunakan teks ini untuk berkongsi maklumat tentang jenama anda dengan pelanggan anda. Terangkan produk, berkongsi pengumuman atau alu-alukan pelanggan ke kedai anda.</p>",
+            "nb": "<p>Bruk denne teksten for å dele informasjon om merkevaren med kundene dine. Beskriv et produkt, del kunngjøringer eller ønsk kunder velkommen til butikken din.</p>",
+            "nl": "<p>Gebruik deze tekst om informatie over je merk te delen met je klanten. Beschrijf een product, deel aankondigingen of verwelkom klanten in je winkel.</p>",
+            "pt-BR": "<p>Use este texto para compartilhar informações sobre sua marca com seus clientes. Descreva um produto, compartilhe anúncios ou receba os clientes em sua loja.</p>",
+            "pt-PT": "<p>Utilize este texto para partilhar informações sobre a sua marca com os seus clientes. Descreva um produto, partilhe comunicados ou receba clientes na sua loja.</p>",
+            "sv": "<p>Använd den här texten för att dela information om ditt varumärke med dina kunder. Beskriv en produkt, dela meddelanden eller välkomna kunder till din butik.</p>",
+            "th": "<p>ใช้ข้อความนี้ในการแชร์ข้อมูลเกี่ยวกับแบรนด์ของคุณกับลูกค้าของคุณ อธิบายคุณสมบัติของสินค้า แชร์ประกาศ หรือต้อนรับลูกค้าสู่ร้านค้าของคุณ</p>",
+            "zh-CN": "<p>使用此文本与您的客户分享有关您品牌的信息。描述产品、分享公告或欢迎客户访问您的商店。</p>",
+            "zh-TW": "<p>您可以用這段文字和顧客分享品牌資訊、描述產品、分享公告，或歡迎顧客光臨您的商店。</p>"
+          }
+        },
+        {
+          "type": "color",
+          "id": "paragraph_color",
+          "label": {
+            "da": "Farve",
+            "de": "Farbe",
+            "en": "Color",
+            "es": "Color",
+            "fi": "Väri",
+            "fr": "Couleur",
+            "hi": "रंग",
+            "it": "Colore",
+            "ja": "色",
+            "ko": "색상",
+            "ms": "Warna",
+            "nb": "Farge",
+            "nl": "Kleur",
+            "pt-BR": "Cor",
+            "pt-PT": "Cor",
+            "sv": "Färg",
+            "th": "สี",
+            "zh-CN": "颜色",
+            "zh-TW": "顏色"
+          },
+          "default": "#4a4a4a"
+        },
+        {
+          "type": "select",
+          "id": "paragraph_size",
+          "label": {
+            "da": "Størrelse",
+            "de": "Größe",
+            "en": "Size",
+            "es": "Tamaño",
+            "fi": "Koko",
+            "fr": "Taille",
+            "hi": "आकार",
+            "it": "Misura",
+            "ja": "サイズ",
+            "ko": "사이즈",
+            "ms": "Saiz",
+            "nb": "Størrelse",
+            "nl": "Grootte",
+            "pt-BR": "Tamanho",
+            "pt-PT": "Tamanho",
+            "sv": "Storlek",
+            "th": "ขนาด",
+            "zh-CN": "大小",
+            "zh-TW": "尺寸"
+          },
+          "default": "1",
+          "options": [
+            {
+              "value": "1",
+              "label": {
+                "da": "Medium",
+                "de": "Mitte",
+                "en": "Medium",
+                "es": "Mediano",
+                "fi": "Keskisuuri",
+                "fr": "Moyenne",
+                "hi": "मध्यम",
+                "it": "Medio",
+                "ja": "中",
+                "ko": "보통",
+                "ms": "Sederhana",
+                "nb": "Middels",
+                "nl": "Gemiddeld",
+                "pt-BR": "Médio",
+                "pt-PT": "Médio",
+                "sv": "Medium",
+                "th": "ปานกลาง",
+                "zh-CN": "中等",
+                "zh-TW": "中等"
+              }
+            },
+            {
+              "value": "1.25",
+              "label": {
+                "da": "Stor",
+                "de": "Groß",
+                "en": "Large",
+                "es": "Grande",
+                "fi": "Suuri",
+                "fr": "Grande",
+                "hi": "बड़ा",
+                "it": "Grande",
+                "ja": "大",
+                "ko": "라지",
+                "ms": "Besar",
+                "nb": "Stor",
+                "nl": "Groot",
+                "pt-BR": "Grande",
+                "pt-PT": "Grande",
+                "sv": "Stor",
+                "th": "ใหญ่",
+                "zh-CN": "大",
+                "zh-TW": "大型"
+              }
+            },
+            {
+              "value": "1.5",
+              "label": {
+                "da": "Ekstra stor",
+                "de": "Extra groß",
+                "en": "Extra large",
+                "es": "Extra grande",
+                "fi": "Erikoissuuri",
+                "fr": "Très grande",
+                "hi": "अतिरिक्त बड़ा",
+                "it": "Extra large",
+                "ja": "特大",
+                "ko": "특대",
+                "ms": "Lebih besar",
+                "nb": "Ekstra stort",
+                "nl": "Extra groot",
+                "pt-BR": "Extra grande",
+                "pt-PT": "Extra grande",
+                "sv": "Extra stor",
+                "th": "ขนาดใหญ่พิเศษ",
+                "zh-CN": "特大",
+                "zh-TW": "超大型"
+              }
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": {
+            "da": "Layout",
+            "de": "Layout",
+            "en": "Layout",
+            "es": "Diseño",
+            "fi": "Asettelu",
+            "fr": "Mise en page",
+            "hi": "लेआउट",
+            "it": "Layout",
+            "ja": "レイアウト",
+            "ko": "레이아웃",
+            "ms": "Tata letak",
+            "nb": "Oppsett",
+            "nl": "Indeling",
+            "pt-BR": "Layout",
+            "pt-PT": "Esquema",
+            "sv": "Layout",
+            "th": "เลย์เอาต์",
+            "zh-CN": "布局",
+            "zh-TW": "版面配置"
+          }
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": {
+            "da": "Containerbredde",
+            "de": "Breite des Elements",
+            "en": "Container width",
+            "es": "Ancho del contenedor",
+            "fi": "Säiliön leveys",
+            "fr": "Largeur du conteneur",
+            "hi": "कंटेनर की चौड़ाई",
+            "it": "Larghezza contenitore",
+            "ja": "コンテナーの幅",
+            "ko": "컨테이너 폭",
+            "ms": "Lebar bekas",
+            "nb": "Beholderbredde",
+            "nl": "Containerbreedte",
+            "pt-BR": "Largura do recipiente",
+            "pt-PT": "Largura do recipiente",
+            "sv": "Container-bredd",
+            "th": "ความกว้างของความจุ",
+            "zh-CN": "容器宽度",
+            "zh-TW": "容器寬度"
+          },
+          "default": "50%",
+          "options": [
+            {
+              "value": "25%",
+              "label": {
+                "da": "25 %",
+                "de": "25%",
+                "en": "25%",
+                "es": "25%",
+                "fi": "25 %",
+                "fr": "25 %",
+                "hi": "25%",
+                "it": "25%",
+                "ja": "25%",
+                "ko": "25%",
+                "ms": "25%",
+                "nb": "25 %",
+                "nl": "25%",
+                "pt-BR": "25%",
+                "pt-PT": "25%",
+                "sv": "25 %",
+                "th": "25%",
+                "zh-CN": "25％",
+                "zh-TW": "25%"
+              }
+            },
+            {
+              "value": "33%",
+              "label": {
+                "da": "33 %",
+                "de": "33%",
+                "en": "33%",
+                "es": "33%",
+                "fi": "33 %",
+                "fr": "33 %",
+                "hi": "33%",
+                "it": "33%",
+                "ja": "33%",
+                "ko": "33%",
+                "ms": "33%",
+                "nb": "33 %",
+                "nl": "33%",
+                "pt-BR": "33%",
+                "pt-PT": "33%",
+                "sv": "33 %",
+                "th": "33%",
+                "zh-CN": "33%",
+                "zh-TW": "33%"
+              }
+            },
+            {
+              "value": "50%",
+              "label": {
+                "da": "50 %",
+                "de": "50%",
+                "en": "50%",
+                "es": "50%",
+                "fi": "50 %",
+                "fr": "50 %",
+                "hi": "50%",
+                "it": "50%",
+                "ja": "50%",
+                "ko": "50%",
+                "ms": "50%",
+                "nb": "50 %",
+                "nl": "50%",
+                "pt-BR": "50%",
+                "pt-PT": "50%",
+                "sv": "50 %",
+                "th": "50%",
+                "zh-CN": "50%",
+                "zh-TW": "50%"
+              }
+            },
+            {
+              "value": "66%",
+              "label": {
+                "da": "66 %",
+                "de": "66%",
+                "en": "66%",
+                "es": "66%",
+                "fi": "66 %",
+                "fr": "66 %",
+                "hi": "66%",
+                "it": "66%",
+                "ja": "66%",
+                "ko": "66%",
+                "ms": "66%",
+                "nb": "66 %",
+                "nl": "66%",
+                "pt-BR": "66%",
+                "pt-PT": "66%",
+                "sv": "66 %",
+                "th": "66%",
+                "zh-CN": "66%",
+                "zh-TW": "66%"
+              }
+            },
+            {
+              "value": "75%",
+              "label": {
+                "da": "75 %",
+                "de": "75%",
+                "en": "75%",
+                "es": "75%",
+                "fi": "75 %",
+                "fr": "75 %",
+                "hi": "75%",
+                "it": "75%",
+                "ja": "75%",
+                "ko": "75%",
+                "ms": "75%",
+                "nb": "75 %",
+                "nl": "75%",
+                "pt-BR": "75%",
+                "pt-PT": "75%",
+                "sv": "75 %",
+                "th": "75%",
+                "zh-CN": "75%",
+                "zh-TW": "75%"
+              }
+            },
+            {
+              "value": "100%",
+              "label": {
+                "da": "100 %",
+                "de": "100%",
+                "en": "100%",
+                "es": "100%",
+                "fi": "100 %",
+                "fr": "100 %",
+                "hi": "100%",
+                "it": "100%",
+                "ja": "100%",
+                "ko": "100%",
+                "ms": "100%",
+                "nb": "100 %",
+                "nl": "100%",
+                "pt-BR": "100%",
+                "pt-PT": "100%",
+                "sv": "100 %",
+                "th": "100%",
+                "zh-CN": "100%",
+                "zh-TW": "100%"
+              }
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": {
+            "da": "Lodret justering",
+            "de": "Vertikale Ausrichtung",
+            "en": "Vertical alignment",
+            "es": "Alineación vertical",
+            "fi": "Pystysuuntainen tasaus",
+            "fr": "Alignement vertical",
+            "hi": "लंबवत पंक्तिबद्धता",
+            "it": "Allineamento verticale",
+            "ja": "垂直アラインメント",
+            "ko": "수직 정렬",
+            "ms": "Penjajaran menegak",
+            "nb": "Vertikal justering",
+            "nl": "Verticaal uitlijnen",
+            "pt-BR": "Alinhamento vertical",
+            "pt-PT": "Alinhamento vertical",
+            "sv": "Vertikal justering",
+            "th": "การจัดวางแนวตั้ง",
+            "zh-CN": "垂直对齐",
+            "zh-TW": "垂直對齊"
+          },
+          "info": {
+            "da": "Placering i forhold til andre indholdsblokke på samme række",
+            "de": "Position im Verhältnis zu anderen Inhaltsblöcken in derselben Zeile",
+            "en": "Position relative to other content blocks on the same row",
+            "es": "Posición relativa a otros bloques de contenido en la misma fila",
+            "fi": "Sijainti suhteessa muihin saman rivin sisältölohkoihin",
+            "fr": "Position par rapport à d'autres blocs de contenu sur la même rangée",
+            "hi": "एक ही पंक्ति पर अन्य सामग्री ब्लॉक के सापेक्ष स्थिति",
+            "it": "Posizione relativa ad altri blocchi di contenuto sulla stessa riga",
+            "ja": "同じ行の別のコンテンツブロックに対する相対的な位置",
+            "ko": "같은 열에 있는 다른 콘텐츠 블록과 관련된 위치",
+            "ms": "Kedudukan relatif kepada blok kandungan lain pada baris yang sama",
+            "nb": "Plassering i forhold til andre innholdsblokker på samme rad",
+            "nl": "Positie ten opzichte van andere inhoudsblokken in dezelfde rij",
+            "pt-BR": "Posição em relação a outros blocos de conteúdo na mesma linha",
+            "pt-PT": "Posição em relação a outros blocos de conteúdo na mesma linha",
+            "sv": "Position i förhållande till andra innehållsblock i samma rad",
+            "th": "ตำแหน่งที่สัมพันธ์กับชุดเนื้อหาอื่นในแถวเดียวกัน",
+            "zh-CN": "相对于同一行中其他内容块的位置",
+            "zh-TW": "和同一列其他內容區塊的相對位置"
+          },
+          "default": "center",
+          "options": [
+            {
+              "value": "top",
+              "label": {
+                "da": "Top",
+                "de": "Oben",
+                "en": "Top",
+                "es": "Superior",
+                "fi": "Ylös",
+                "fr": "En haut",
+                "hi": "सबसे ऊपर",
+                "it": "In alto",
+                "ja": "上",
+                "ko": "위쪽",
+                "ms": "Atas",
+                "nb": "Topp",
+                "nl": "Boven",
+                "pt-BR": "Acima",
+                "pt-PT": "Acima",
+                "sv": "Högst upp",
+                "th": "ด้านบน",
+                "zh-CN": "顶部",
+                "zh-TW": "頂部"
+              }
+            },
+            {
+              "value": "center",
+              "label": {
+                "da": "I midten",
+                "de": "Mitte",
+                "en": "Middle",
+                "es": "Al medio",
+                "fi": "Keskelle",
+                "fr": "Au milieu",
+                "hi": "मध्य में",
+                "it": "Al centro",
+                "ja": "中央",
+                "ko": "중간",
+                "ms": "Tengah",
+                "nb": "Midten",
+                "nl": "Midden",
+                "pt-BR": "Meio",
+                "pt-PT": "Meio",
+                "sv": "Mitten",
+                "th": "ตรงกลาง",
+                "zh-CN": "中间",
+                "zh-TW": "中央"
+              }
+            },
+            {
+              "value": "bottom",
+              "label": {
+                "da": "Bund",
+                "de": "Unten",
+                "en": "Bottom",
+                "es": "Inferior",
+                "fi": "Alas",
+                "fr": "En bas",
+                "hi": "नीचे का",
+                "it": "In basso",
+                "ja": "下",
+                "ko": "아래쪽",
+                "ms": "Bawah",
+                "nb": "Bunn",
+                "nl": "Onder",
+                "pt-BR": "Abaixo",
+                "pt-PT": "Abaixo",
+                "sv": "Längst ner",
+                "th": "ด้านล่าง",
+                "zh-CN": "底部",
+                "zh-TW": "底部"
+              }
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "align_text",
+          "label": {
+            "da": "Vandret justering",
+            "de": "Horizontale Ausrichtung",
+            "en": "Horizontal alignment",
+            "es": "Alineación horizontal",
+            "fi": "Vaakasuora tasaus",
+            "fr": "Alignement horizontal",
+            "hi": "क्षैतिज संरेखण",
+            "it": "Allineamento orizzontale",
+            "ja": "水平アラインメント",
+            "ko": "가로 정렬",
+            "ms": "Penjajaran mendatar",
+            "nb": "Horisontal justering",
+            "nl": "Horizontaal uitlijnen",
+            "pt-BR": "Alinhamento horizontal",
+            "pt-PT": "Alinhamento horizontal",
+            "sv": "Horisontell justering",
+            "th": "การจัดวางแนวนอน",
+            "zh-CN": "水平对齐",
+            "zh-TW": "水平對齊"
+          },
+          "default": "left",
+          "options": [
+            {
+              "value": "left",
+              "label": {
+                "da": "Venstre",
+                "de": "Links",
+                "en": "Left",
+                "es": "Izquierda",
+                "fi": "Vasen",
+                "fr": "Gauche",
+                "hi": "बाएँ",
+                "it": "Sinistra",
+                "ja": "左",
+                "ko": "왼쪽",
+                "ms": "Kiri",
+                "nb": "Venstre",
+                "nl": "Links",
+                "pt-BR": "Esquerda",
+                "pt-PT": "Esquerda",
+                "sv": "Vänster",
+                "th": "ด้านซ้าย",
+                "zh-CN": "左侧",
+                "zh-TW": "左方"
+              }
+            },
+            {
+              "value": "center",
+              "label": {
+                "da": "Centreret",
+                "de": "Mittig",
+                "en": "Centered",
+                "es": "Centrado",
+                "fi": "Keskitetty",
+                "fr": "Centré",
+                "hi": "केंद्र",
+                "it": "Centrato",
+                "ja": "中央揃え",
+                "ko": "센터 맞추기",
+                "ms": "Tengah",
+                "nb": "Sentrert",
+                "nl": "Gecentreerd",
+                "pt-BR": "Centralizado",
+                "pt-PT": "Centrado",
+                "sv": "Centrera",
+                "th": "ตรงกลาง",
+                "zh-CN": "居中",
+                "zh-TW": "置中"
+              }
+            },
+            {
+              "value": "right",
+              "label": {
+                "da": "Højre",
+                "de": "Rechts",
+                "en": "Right",
+                "es": "Derecha",
+                "fi": "Oikea",
+                "fr": "Droite",
+                "hi": "दाएँ",
+                "it": "Destra",
+                "ja": "右",
+                "ko": "오른쪽",
+                "ms": "Kanan",
+                "nb": "Høyre",
+                "nl": "Rechts",
+                "pt-BR": "Direita",
+                "pt-PT": "Direita",
+                "sv": "Höger",
+                "th": "ด้านขวา",
+                "zh-CN": "右侧",
+                "zh-TW": "右方"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": {
+        "da": "Billede",
+        "de": "Foto",
+        "en": "Image",
+        "es": "Imagen",
+        "fi": "Kuva",
+        "fr": "Image",
+        "hi": "इमेज",
+        "it": "Immagine",
+        "ja": "画像",
+        "ko": "이미지",
+        "ms": "Imej",
+        "nb": "Bilde",
+        "nl": "Afbeelding",
+        "pt-BR": "Imagem",
+        "pt-PT": "Imagem",
+        "sv": "Bild",
+        "th": "รูปภาพ",
+        "zh-CN": "图片",
+        "zh-TW": "圖片"
+      },
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": {
+            "da": "Billede",
+            "de": "Foto",
+            "en": "Image",
+            "es": "Imagen",
+            "fi": "Kuva",
+            "fr": "Image",
+            "hi": "इमेज",
+            "it": "Immagine",
+            "ja": "画像",
+            "ko": "이미지",
+            "ms": "Imej",
+            "nb": "Bilde",
+            "nl": "Afbeelding",
+            "pt-BR": "Imagem",
+            "pt-PT": "Imagem",
+            "sv": "Bild",
+            "th": "รูปภาพ",
+            "zh-CN": "图片",
+            "zh-TW": "圖片"
+          }
+        },
+        {
+          "type": "header",
+          "content": {
+            "da": "Layout",
+            "de": "Layout",
+            "en": "Layout",
+            "es": "Diseño",
+            "fi": "Asettelu",
+            "fr": "Mise en page",
+            "hi": "लेआउट",
+            "it": "Layout",
+            "ja": "レイアウト",
+            "ko": "레이아웃",
+            "ms": "Tata letak",
+            "nb": "Oppsett",
+            "nl": "Indeling",
+            "pt-BR": "Layout",
+            "pt-PT": "Esquema",
+            "sv": "Layout",
+            "th": "เลย์เอาต์",
+            "zh-CN": "布局",
+            "zh-TW": "版面配置"
+          }
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": {
+            "da": "Containerbredde",
+            "de": "Breite des Elements",
+            "en": "Container width",
+            "es": "Ancho del contenedor",
+            "fi": "Säiliön leveys",
+            "fr": "Largeur du conteneur",
+            "hi": "कंटेनर की चौड़ाई",
+            "it": "Larghezza contenitore",
+            "ja": "コンテナーの幅",
+            "ko": "컨테이너 폭",
+            "ms": "Lebar bekas",
+            "nb": "Beholderbredde",
+            "nl": "Containerbreedte",
+            "pt-BR": "Largura do recipiente",
+            "pt-PT": "Largura do recipiente",
+            "sv": "Container-bredd",
+            "th": "ความกว้างของความจุ",
+            "zh-CN": "容器宽度",
+            "zh-TW": "容器寬度"
+          },
+          "default": "50%",
+          "options": [
+            {
+              "value": "25%",
+              "label": {
+                "da": "25 %",
+                "de": "25%",
+                "en": "25%",
+                "es": "25%",
+                "fi": "25 %",
+                "fr": "25 %",
+                "hi": "25%",
+                "it": "25%",
+                "ja": "25%",
+                "ko": "25%",
+                "ms": "25%",
+                "nb": "25 %",
+                "nl": "25%",
+                "pt-BR": "25%",
+                "pt-PT": "25%",
+                "sv": "25 %",
+                "th": "25%",
+                "zh-CN": "25％",
+                "zh-TW": "25%"
+              }
+            },
+            {
+              "value": "33%",
+              "label": {
+                "da": "33 %",
+                "de": "33%",
+                "en": "33%",
+                "es": "33%",
+                "fi": "33 %",
+                "fr": "33 %",
+                "hi": "33%",
+                "it": "33%",
+                "ja": "33%",
+                "ko": "33%",
+                "ms": "33%",
+                "nb": "33 %",
+                "nl": "33%",
+                "pt-BR": "33%",
+                "pt-PT": "33%",
+                "sv": "33 %",
+                "th": "33%",
+                "zh-CN": "33%",
+                "zh-TW": "33%"
+              }
+            },
+            {
+              "value": "50%",
+              "label": {
+                "da": "50 %",
+                "de": "50%",
+                "en": "50%",
+                "es": "50%",
+                "fi": "50 %",
+                "fr": "50 %",
+                "hi": "50%",
+                "it": "50%",
+                "ja": "50%",
+                "ko": "50%",
+                "ms": "50%",
+                "nb": "50 %",
+                "nl": "50%",
+                "pt-BR": "50%",
+                "pt-PT": "50%",
+                "sv": "50 %",
+                "th": "50%",
+                "zh-CN": "50%",
+                "zh-TW": "50%"
+              }
+            },
+            {
+              "value": "66%",
+              "label": {
+                "da": "66 %",
+                "de": "66%",
+                "en": "66%",
+                "es": "66%",
+                "fi": "66 %",
+                "fr": "66 %",
+                "hi": "66%",
+                "it": "66%",
+                "ja": "66%",
+                "ko": "66%",
+                "ms": "66%",
+                "nb": "66 %",
+                "nl": "66%",
+                "pt-BR": "66%",
+                "pt-PT": "66%",
+                "sv": "66 %",
+                "th": "66%",
+                "zh-CN": "66%",
+                "zh-TW": "66%"
+              }
+            },
+            {
+              "value": "75%",
+              "label": {
+                "da": "75 %",
+                "de": "75%",
+                "en": "75%",
+                "es": "75%",
+                "fi": "75 %",
+                "fr": "75 %",
+                "hi": "75%",
+                "it": "75%",
+                "ja": "75%",
+                "ko": "75%",
+                "ms": "75%",
+                "nb": "75 %",
+                "nl": "75%",
+                "pt-BR": "75%",
+                "pt-PT": "75%",
+                "sv": "75 %",
+                "th": "75%",
+                "zh-CN": "75%",
+                "zh-TW": "75%"
+              }
+            },
+            {
+              "value": "100%",
+              "label": {
+                "da": "100 %",
+                "de": "100%",
+                "en": "100%",
+                "es": "100%",
+                "fi": "100 %",
+                "fr": "100 %",
+                "hi": "100%",
+                "it": "100%",
+                "ja": "100%",
+                "ko": "100%",
+                "ms": "100%",
+                "nb": "100 %",
+                "nl": "100%",
+                "pt-BR": "100%",
+                "pt-PT": "100%",
+                "sv": "100 %",
+                "th": "100%",
+                "zh-CN": "100%",
+                "zh-TW": "100%"
+              }
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": {
+            "da": "Lodret justering",
+            "de": "Vertikale Ausrichtung",
+            "en": "Vertical alignment",
+            "es": "Alineación vertical",
+            "fi": "Pystysuuntainen tasaus",
+            "fr": "Alignement vertical",
+            "hi": "लंबवत पंक्तिबद्धता",
+            "it": "Allineamento verticale",
+            "ja": "垂直アラインメント",
+            "ko": "수직 정렬",
+            "ms": "Penjajaran menegak",
+            "nb": "Vertikal justering",
+            "nl": "Verticaal uitlijnen",
+            "pt-BR": "Alinhamento vertical",
+            "pt-PT": "Alinhamento vertical",
+            "sv": "Vertikal justering",
+            "th": "การจัดวางแนวตั้ง",
+            "zh-CN": "垂直对齐",
+            "zh-TW": "垂直對齊"
+          },
+          "info": {
+            "da": "Placering i forhold til andre indholdsblokke på samme række",
+            "de": "Position im Verhältnis zu anderen Inhaltsblöcken in derselben Zeile",
+            "en": "Position relative to other content blocks on the same row",
+            "es": "Posición relativa a otros bloques de contenido en la misma fila",
+            "fi": "Sijainti suhteessa muihin saman rivin sisältölohkoihin",
+            "fr": "Position par rapport à d'autres blocs de contenu sur la même rangée",
+            "hi": "एक ही पंक्ति पर अन्य सामग्री ब्लॉक के सापेक्ष स्थिति",
+            "it": "Posizione relativa ad altri blocchi di contenuto sulla stessa riga",
+            "ja": "同じ行の別のコンテンツブロックに対する相対的な位置",
+            "ko": "같은 열에 있는 다른 콘텐츠 블록과 관련된 위치",
+            "ms": "Kedudukan relatif kepada blok kandungan lain pada baris yang sama",
+            "nb": "Plassering i forhold til andre innholdsblokker på samme rad",
+            "nl": "Positie ten opzichte van andere inhoudsblokken in dezelfde rij",
+            "pt-BR": "Posição em relação a outros blocos de conteúdo na mesma linha",
+            "pt-PT": "Posição em relação a outros blocos de conteúdo na mesma linha",
+            "sv": "Position i förhållande till andra innehållsblock i samma rad",
+            "th": "ตำแหน่งที่สัมพันธ์กับชุดเนื้อหาอื่นในแถวเดียวกัน",
+            "zh-CN": "相对于同一行中其他内容块的位置",
+            "zh-TW": "和同一列其他內容區塊的相對位置"
+          },
+          "default": "center",
+          "options": [
+            {
+              "value": "top",
+              "label": {
+                "da": "Top",
+                "de": "Oben",
+                "en": "Top",
+                "es": "Superior",
+                "fi": "Ylös",
+                "fr": "En haut",
+                "hi": "सबसे ऊपर",
+                "it": "In alto",
+                "ja": "上",
+                "ko": "위쪽",
+                "ms": "Atas",
+                "nb": "Topp",
+                "nl": "Boven",
+                "pt-BR": "Acima",
+                "pt-PT": "Acima",
+                "sv": "Högst upp",
+                "th": "ด้านบน",
+                "zh-CN": "顶部",
+                "zh-TW": "頂部"
+              }
+            },
+            {
+              "value": "center",
+              "label": {
+                "da": "I midten",
+                "de": "Mitte",
+                "en": "Middle",
+                "es": "Al medio",
+                "fi": "Keskelle",
+                "fr": "Au milieu",
+                "hi": "मध्य में",
+                "it": "Al centro",
+                "ja": "中央",
+                "ko": "중간",
+                "ms": "Tengah",
+                "nb": "Midten",
+                "nl": "Midden",
+                "pt-BR": "Meio",
+                "pt-PT": "Meio",
+                "sv": "Mitten",
+                "th": "ตรงกลาง",
+                "zh-CN": "中间",
+                "zh-TW": "中央"
+              }
+            },
+            {
+              "value": "bottom",
+              "label": {
+                "da": "Bund",
+                "de": "Unten",
+                "en": "Bottom",
+                "es": "Inferior",
+                "fi": "Alas",
+                "fr": "En bas",
+                "hi": "नीचे का",
+                "it": "In basso",
+                "ja": "下",
+                "ko": "아래쪽",
+                "ms": "Bawah",
+                "nb": "Bunn",
+                "nl": "Onder",
+                "pt-BR": "Abaixo",
+                "pt-PT": "Abaixo",
+                "sv": "Längst ner",
+                "th": "ด้านล่าง",
+                "zh-CN": "底部",
+                "zh-TW": "底部"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": {
+        "da": "Video",
+        "de": "Video",
+        "en": "Video",
+        "es": "Video",
+        "fi": "Video",
+        "fr": "Vidéo",
+        "hi": "वीडियो",
+        "it": "Video",
+        "ja": "ビデオ",
+        "ko": "동영상",
+        "ms": "Video",
+        "nb": "Video",
+        "nl": "Video",
+        "pt-BR": "Vídeo",
+        "pt-PT": "Vídeo",
+        "sv": "Video",
+        "th": "วิดีโอ",
+        "zh-CN": "视频",
+        "zh-TW": "影片"
+      },
+      "settings": [
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": {
+            "da": "Videolink",
+            "de": "Video-Link",
+            "en": "Video link",
+            "es": "Enlace de video",
+            "fi": "Videolinkki",
+            "fr": "Lien de la vidéo",
+            "hi": "वीडियो लिंक",
+            "it": "Link video",
+            "ja": "ビデオリンク",
+            "ko": "동영상 링크",
+            "ms": "Pautan video",
+            "nb": "Videokobling",
+            "nl": "Videolink",
+            "pt-BR": "Link do vídeo",
+            "pt-PT": "Ligação do vídeo",
+            "sv": "Videolänk",
+            "th": "ลิงก์วิดีโอ",
+            "zh-CN": "视频链接",
+            "zh-TW": "影片連結"
+          },
+          "accept": [
+            "youtube",
+            "vimeo"
+          ],
+          "default": {
+            "da": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "de": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "en": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "es": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "fi": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "fr": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "hi": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "it": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "ja": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "ko": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "ms": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "nb": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "nl": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "pt-BR": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "pt-PT": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "sv": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "th": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "zh-CN": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "zh-TW": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+          }
+        },
+        {
+          "type": "header",
+          "content": {
+            "da": "Layout",
+            "de": "Layout",
+            "en": "Layout",
+            "es": "Diseño",
+            "fi": "Asettelu",
+            "fr": "Mise en page",
+            "hi": "लेआउट",
+            "it": "Layout",
+            "ja": "レイアウト",
+            "ko": "레이아웃",
+            "ms": "Tata letak",
+            "nb": "Oppsett",
+            "nl": "Indeling",
+            "pt-BR": "Layout",
+            "pt-PT": "Esquema",
+            "sv": "Layout",
+            "th": "เลย์เอาต์",
+            "zh-CN": "布局",
+            "zh-TW": "版面配置"
+          }
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": {
+            "da": "Containerbredde",
+            "de": "Breite des Elements",
+            "en": "Container width",
+            "es": "Ancho del contenedor",
+            "fi": "Säiliön leveys",
+            "fr": "Largeur du conteneur",
+            "hi": "कंटेनर की चौड़ाई",
+            "it": "Larghezza contenitore",
+            "ja": "コンテナーの幅",
+            "ko": "컨테이너 폭",
+            "ms": "Lebar bekas",
+            "nb": "Beholderbredde",
+            "nl": "Containerbreedte",
+            "pt-BR": "Largura do recipiente",
+            "pt-PT": "Largura do recipiente",
+            "sv": "Container-bredd",
+            "th": "ความกว้างของความจุ",
+            "zh-CN": "容器宽度",
+            "zh-TW": "容器寬度"
+          },
+          "default": "100%",
+          "options": [
+            {
+              "value": "25%",
+              "label": {
+                "da": "25 %",
+                "de": "25%",
+                "en": "25%",
+                "es": "25%",
+                "fi": "25 %",
+                "fr": "25 %",
+                "hi": "25%",
+                "it": "25%",
+                "ja": "25%",
+                "ko": "25%",
+                "ms": "25%",
+                "nb": "25 %",
+                "nl": "25%",
+                "pt-BR": "25%",
+                "pt-PT": "25%",
+                "sv": "25 %",
+                "th": "25%",
+                "zh-CN": "25％",
+                "zh-TW": "25%"
+              }
+            },
+            {
+              "value": "33%",
+              "label": {
+                "da": "33 %",
+                "de": "33%",
+                "en": "33%",
+                "es": "33%",
+                "fi": "33 %",
+                "fr": "33 %",
+                "hi": "33%",
+                "it": "33%",
+                "ja": "33%",
+                "ko": "33%",
+                "ms": "33%",
+                "nb": "33 %",
+                "nl": "33%",
+                "pt-BR": "33%",
+                "pt-PT": "33%",
+                "sv": "33 %",
+                "th": "33%",
+                "zh-CN": "33%",
+                "zh-TW": "33%"
+              }
+            },
+            {
+              "value": "50%",
+              "label": {
+                "da": "50 %",
+                "de": "50%",
+                "en": "50%",
+                "es": "50%",
+                "fi": "50 %",
+                "fr": "50 %",
+                "hi": "50%",
+                "it": "50%",
+                "ja": "50%",
+                "ko": "50%",
+                "ms": "50%",
+                "nb": "50 %",
+                "nl": "50%",
+                "pt-BR": "50%",
+                "pt-PT": "50%",
+                "sv": "50 %",
+                "th": "50%",
+                "zh-CN": "50%",
+                "zh-TW": "50%"
+              }
+            },
+            {
+              "value": "66%",
+              "label": {
+                "da": "66 %",
+                "de": "66%",
+                "en": "66%",
+                "es": "66%",
+                "fi": "66 %",
+                "fr": "66 %",
+                "hi": "66%",
+                "it": "66%",
+                "ja": "66%",
+                "ko": "66%",
+                "ms": "66%",
+                "nb": "66 %",
+                "nl": "66%",
+                "pt-BR": "66%",
+                "pt-PT": "66%",
+                "sv": "66 %",
+                "th": "66%",
+                "zh-CN": "66%",
+                "zh-TW": "66%"
+              }
+            },
+            {
+              "value": "75%",
+              "label": {
+                "da": "75 %",
+                "de": "75%",
+                "en": "75%",
+                "es": "75%",
+                "fi": "75 %",
+                "fr": "75 %",
+                "hi": "75%",
+                "it": "75%",
+                "ja": "75%",
+                "ko": "75%",
+                "ms": "75%",
+                "nb": "75 %",
+                "nl": "75%",
+                "pt-BR": "75%",
+                "pt-PT": "75%",
+                "sv": "75 %",
+                "th": "75%",
+                "zh-CN": "75%",
+                "zh-TW": "75%"
+              }
+            },
+            {
+              "value": "100%",
+              "label": {
+                "da": "100 %",
+                "de": "100%",
+                "en": "100%",
+                "es": "100%",
+                "fi": "100 %",
+                "fr": "100 %",
+                "hi": "100%",
+                "it": "100%",
+                "ja": "100%",
+                "ko": "100%",
+                "ms": "100%",
+                "nb": "100 %",
+                "nl": "100%",
+                "pt-BR": "100%",
+                "pt-PT": "100%",
+                "sv": "100 %",
+                "th": "100%",
+                "zh-CN": "100%",
+                "zh-TW": "100%"
+              }
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": {
+            "da": "Lodret justering",
+            "de": "Vertikale Ausrichtung",
+            "en": "Vertical alignment",
+            "es": "Alineación vertical",
+            "fi": "Pystysuuntainen tasaus",
+            "fr": "Alignement vertical",
+            "hi": "लंबवत पंक्तिबद्धता",
+            "it": "Allineamento verticale",
+            "ja": "垂直アラインメント",
+            "ko": "수직 정렬",
+            "ms": "Penjajaran menegak",
+            "nb": "Vertikal justering",
+            "nl": "Verticaal uitlijnen",
+            "pt-BR": "Alinhamento vertical",
+            "pt-PT": "Alinhamento vertical",
+            "sv": "Vertikal justering",
+            "th": "การจัดวางแนวตั้ง",
+            "zh-CN": "垂直对齐",
+            "zh-TW": "垂直對齊"
+          },
+          "default": "top",
+          "options": [
+            {
+              "value": "top",
+              "label": {
+                "da": "Top",
+                "de": "Oben",
+                "en": "Top",
+                "es": "Superior",
+                "fi": "Ylös",
+                "fr": "En haut",
+                "hi": "सबसे ऊपर",
+                "it": "In alto",
+                "ja": "上",
+                "ko": "위쪽",
+                "ms": "Atas",
+                "nb": "Topp",
+                "nl": "Boven",
+                "pt-BR": "Acima",
+                "pt-PT": "Acima",
+                "sv": "Högst upp",
+                "th": "ด้านบน",
+                "zh-CN": "顶部",
+                "zh-TW": "頂部"
+              }
+            },
+            {
+              "value": "center",
+              "label": {
+                "da": "I midten",
+                "de": "Mitte",
+                "en": "Middle",
+                "es": "Al medio",
+                "fi": "Keskelle",
+                "fr": "Au milieu",
+                "hi": "मध्य में",
+                "it": "Al centro",
+                "ja": "中央",
+                "ko": "중간",
+                "ms": "Tengah",
+                "nb": "Midten",
+                "nl": "Midden",
+                "pt-BR": "Meio",
+                "pt-PT": "Meio",
+                "sv": "Mitten",
+                "th": "ตรงกลาง",
+                "zh-CN": "中间",
+                "zh-TW": "中央"
+              }
+            },
+            {
+              "value": "bottom",
+              "label": {
+                "da": "Bund",
+                "de": "Unten",
+                "en": "Bottom",
+                "es": "Inferior",
+                "fi": "Alas",
+                "fr": "En bas",
+                "hi": "नीचे का",
+                "it": "In basso",
+                "ja": "下",
+                "ko": "아래쪽",
+                "ms": "Bawah",
+                "nb": "Bunn",
+                "nl": "Onder",
+                "pt-BR": "Abaixo",
+                "pt-PT": "Abaixo",
+                "sv": "Längst ner",
+                "th": "ด้านล่าง",
+                "zh-CN": "底部",
+                "zh-TW": "底部"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "product",
+      "name": {
+        "da": "Produkt",
+        "de": "Produkt",
+        "en": "Product",
+        "es": "Producto",
+        "fi": "Tuote",
+        "fr": "Produit",
+        "hi": "उत्पाद",
+        "it": "Prodotto",
+        "ja": "商品",
+        "ko": "제품",
+        "ms": "Produk",
+        "nb": "Produkt",
+        "nl": "Product",
+        "pt-BR": "Produto",
+        "pt-PT": "Produto",
+        "sv": "Produkt",
+        "th": "สินค้า",
+        "zh-CN": "产品",
+        "zh-TW": "產品"
+      },
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": {
+            "da": "Produkt",
+            "de": "Produkt",
+            "en": "Product",
+            "es": "Producto",
+            "fi": "Tuote",
+            "fr": "Produit",
+            "hi": "उत्पाद",
+            "it": "Prodotto",
+            "ja": "商品",
+            "ko": "제품",
+            "ms": "Produk",
+            "nb": "Produkt",
+            "nl": "Product",
+            "pt-BR": "Produto",
+            "pt-PT": "Produto",
+            "sv": "Produkt",
+            "th": "สินค้า",
+            "zh-CN": "产品",
+            "zh-TW": "產品"
+          }
+        },
+        {
+          "type": "header",
+          "content": {
+            "da": "Billede",
+            "de": "Foto",
+            "en": "Image",
+            "es": "Imagen",
+            "fi": "Kuva",
+            "fr": "Image",
+            "hi": "इमेज",
+            "it": "Immagine",
+            "ja": "画像",
+            "ko": "이미지",
+            "ms": "Imej",
+            "nb": "Bilde",
+            "nl": "Afbeelding",
+            "pt-BR": "Imagem",
+            "pt-PT": "Imagem",
+            "sv": "Bild",
+            "th": "รูปภาพ",
+            "zh-CN": "图片",
+            "zh-TW": "圖片"
+          }
+        },
+        {
+          "type": "checkbox",
+          "id": "show_spacing",
+          "label": {
+            "da": "Aktivér billedafstand",
+            "de": "Bildabstand aktivieren",
+            "en": "Enable image spacing",
+            "es": "Habilitar espaciado de imagen",
+            "fi": "Ota kuvien välistys käyttöön",
+            "fr": "Activer l'espacement des images",
+            "hi": "इमेज स्पेसिंग सक्षम करें",
+            "it": "Abilita spaziatura immagini",
+            "ja": "画像の間隔を有効にする",
+            "ko": "이미지 공간 추가",
+            "ms": "Dayakan ruang imej",
+            "nb": "Aktiver bildeavstand",
+            "nl": "Afstand tussen afbeeldingen inschakelen",
+            "pt-BR": "Habilitar espaçamento de imagem",
+            "pt-PT": "Ativar espaçamento de imagens",
+            "sv": "Aktivera bildavstånd",
+            "th": "เปิดใช้การวางตำแหน่งรูปภาพ",
+            "zh-CN": "启用图片间距",
+            "zh-TW": "啟用圖片間距"
+          }
+        },
+        {
+          "type": "header",
+          "content": {
+            "da": "Layout",
+            "de": "Layout",
+            "en": "Layout",
+            "es": "Diseño",
+            "fi": "Asettelu",
+            "fr": "Mise en page",
+            "hi": "लेआउट",
+            "it": "Layout",
+            "ja": "レイアウト",
+            "ko": "레이아웃",
+            "ms": "Tata letak",
+            "nb": "Oppsett",
+            "nl": "Indeling",
+            "pt-BR": "Layout",
+            "pt-PT": "Esquema",
+            "sv": "Layout",
+            "th": "เลย์เอาต์",
+            "zh-CN": "布局",
+            "zh-TW": "版面配置"
+          }
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": {
+            "da": "Containerbredde",
+            "de": "Breite des Elements",
+            "en": "Container width",
+            "es": "Ancho del contenedor",
+            "fi": "Säiliön leveys",
+            "fr": "Largeur du conteneur",
+            "hi": "कंटेनर की चौड़ाई",
+            "it": "Larghezza contenitore",
+            "ja": "コンテナーの幅",
+            "ko": "컨테이너 폭",
+            "ms": "Lebar bekas",
+            "nb": "Beholderbredde",
+            "nl": "Containerbreedte",
+            "pt-BR": "Largura do recipiente",
+            "pt-PT": "Largura do recipiente",
+            "sv": "Container-bredd",
+            "th": "ความกว้างของความจุ",
+            "zh-CN": "容器宽度",
+            "zh-TW": "容器寬度"
+          },
+          "default": "50%",
+          "options": [
+            {
+              "value": "25%",
+              "label": {
+                "da": "25 %",
+                "de": "25%",
+                "en": "25%",
+                "es": "25%",
+                "fi": "25 %",
+                "fr": "25 %",
+                "hi": "25%",
+                "it": "25%",
+                "ja": "25%",
+                "ko": "25%",
+                "ms": "25%",
+                "nb": "25 %",
+                "nl": "25%",
+                "pt-BR": "25%",
+                "pt-PT": "25%",
+                "sv": "25 %",
+                "th": "25%",
+                "zh-CN": "25％",
+                "zh-TW": "25%"
+              }
+            },
+            {
+              "value": "33%",
+              "label": {
+                "da": "33 %",
+                "de": "33%",
+                "en": "33%",
+                "es": "33%",
+                "fi": "33 %",
+                "fr": "33 %",
+                "hi": "33%",
+                "it": "33%",
+                "ja": "33%",
+                "ko": "33%",
+                "ms": "33%",
+                "nb": "33 %",
+                "nl": "33%",
+                "pt-BR": "33%",
+                "pt-PT": "33%",
+                "sv": "33 %",
+                "th": "33%",
+                "zh-CN": "33%",
+                "zh-TW": "33%"
+              }
+            },
+            {
+              "value": "50%",
+              "label": {
+                "da": "50 %",
+                "de": "50%",
+                "en": "50%",
+                "es": "50%",
+                "fi": "50 %",
+                "fr": "50 %",
+                "hi": "50%",
+                "it": "50%",
+                "ja": "50%",
+                "ko": "50%",
+                "ms": "50%",
+                "nb": "50 %",
+                "nl": "50%",
+                "pt-BR": "50%",
+                "pt-PT": "50%",
+                "sv": "50 %",
+                "th": "50%",
+                "zh-CN": "50%",
+                "zh-TW": "50%"
+              }
+            },
+            {
+              "value": "66%",
+              "label": {
+                "da": "66 %",
+                "de": "66%",
+                "en": "66%",
+                "es": "66%",
+                "fi": "66 %",
+                "fr": "66 %",
+                "hi": "66%",
+                "it": "66%",
+                "ja": "66%",
+                "ko": "66%",
+                "ms": "66%",
+                "nb": "66 %",
+                "nl": "66%",
+                "pt-BR": "66%",
+                "pt-PT": "66%",
+                "sv": "66 %",
+                "th": "66%",
+                "zh-CN": "66%",
+                "zh-TW": "66%"
+              }
+            },
+            {
+              "value": "75%",
+              "label": {
+                "da": "75 %",
+                "de": "75%",
+                "en": "75%",
+                "es": "75%",
+                "fi": "75 %",
+                "fr": "75 %",
+                "hi": "75%",
+                "it": "75%",
+                "ja": "75%",
+                "ko": "75%",
+                "ms": "75%",
+                "nb": "75 %",
+                "nl": "75%",
+                "pt-BR": "75%",
+                "pt-PT": "75%",
+                "sv": "75 %",
+                "th": "75%",
+                "zh-CN": "75%",
+                "zh-TW": "75%"
+              }
+            },
+            {
+              "value": "100%",
+              "label": {
+                "da": "100 %",
+                "de": "100%",
+                "en": "100%",
+                "es": "100%",
+                "fi": "100 %",
+                "fr": "100 %",
+                "hi": "100%",
+                "it": "100%",
+                "ja": "100%",
+                "ko": "100%",
+                "ms": "100%",
+                "nb": "100 %",
+                "nl": "100%",
+                "pt-BR": "100%",
+                "pt-PT": "100%",
+                "sv": "100 %",
+                "th": "100%",
+                "zh-CN": "100%",
+                "zh-TW": "100%"
+              }
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": {
+            "da": "Lodret justering",
+            "de": "Vertikale Ausrichtung",
+            "en": "Vertical alignment",
+            "es": "Alineación vertical",
+            "fi": "Pystysuuntainen tasaus",
+            "fr": "Alignement vertical",
+            "hi": "लंबवत पंक्तिबद्धता",
+            "it": "Allineamento verticale",
+            "ja": "垂直アラインメント",
+            "ko": "수직 정렬",
+            "ms": "Penjajaran menegak",
+            "nb": "Vertikal justering",
+            "nl": "Verticaal uitlijnen",
+            "pt-BR": "Alinhamento vertical",
+            "pt-PT": "Alinhamento vertical",
+            "sv": "Vertikal justering",
+            "th": "การจัดวางแนวตั้ง",
+            "zh-CN": "垂直对齐",
+            "zh-TW": "垂直對齊"
+          },
+          "default": "center",
+          "options": [
+            {
+              "value": "top-left",
+              "label": {
+                "da": "Øverst til venstre",
+                "de": "Oben links",
+                "en": "Top left",
+                "es": "Superior izquierda",
+                "fi": "Ylhäällä vasemmalla",
+                "fr": "En haut à gauche",
+                "hi": "शीर्ष पर बाईं ओर",
+                "it": "In alto a sinistra",
+                "ja": "左上",
+                "ko": "왼쪽 상단",
+                "ms": "Kiri atas",
+                "nb": "Øverst til venstre",
+                "nl": "Linksboven",
+                "pt-BR": "Superior esquerdo",
+                "pt-PT": "Canto superior esquerdo",
+                "sv": "Överst till vänster",
+                "th": "ซ้ายบน",
+                "zh-CN": "左上方",
+                "zh-TW": "左上角"
+              }
+            },
+            {
+              "value": "top",
+              "label": {
+                "da": "Øverst i midten",
+                "de": "Oben mittig",
+                "en": "Top middle",
+                "es": "Superior al medio",
+                "fi": "Ylhäällä keskelle",
+                "fr": "En haut au centre",
+                "hi": "शीर्ष मध्य",
+                "it": "Al centro in alto",
+                "ja": "中央上",
+                "ko": "상단 중간",
+                "ms": "Tengah atas",
+                "nb": "Øverst i midten",
+                "nl": "Midden boven",
+                "pt-BR": "Centro da parte superior",
+                "pt-PT": "Parte superior central",
+                "sv": "Överst i mitten",
+                "th": "ตรงกลางด้านบน",
+                "zh-CN": "顶部中间",
+                "zh-TW": "中央上方"
+              }
+            },
+            {
+              "value": "top-right",
+              "label": {
+                "da": "Øverst til højre",
+                "de": "Oben rechts",
+                "en": "Top right",
+                "es": "Superior derecha",
+                "fi": "Ylhäällä oikealla",
+                "fr": "En haut à droite",
+                "hi": "शीर्ष पर दाईं ओर",
+                "it": "In alto a destra",
+                "ja": "右上",
+                "ko": "오른쪽 상단",
+                "ms": "Kanan atas",
+                "nb": "Øverst til høyre",
+                "nl": "Rechtsboven",
+                "pt-BR": "Superior direito",
+                "pt-PT": "Canto superior direito",
+                "sv": "Överst till höger",
+                "th": "ขวาบน",
+                "zh-CN": "右上方",
+                "zh-TW": "右上角"
+              }
+            },
+            {
+              "value": "middle-left",
+              "label": {
+                "da": "Midt på til venstre",
+                "de": "Mitte links",
+                "en": "Middle left",
+                "es": "Al medio a la izquierda",
+                "fi": "Keskellä vasemmalla",
+                "fr": "Au milieu à gauche",
+                "hi": "मध्य में बाईं ओर",
+                "it": "In mezzo a sinistra",
+                "ja": "中央左",
+                "ko": "왼쪽 중간",
+                "ms": "Kiri tengah",
+                "nb": "Midt til venstre",
+                "nl": "Links midden",
+                "pt-BR": "Meio esquerdo",
+                "pt-PT": "Intermédio à esquerda",
+                "sv": "Mitten till vänster",
+                "th": "ซ้ายกลาง",
+                "zh-CN": "中间居左",
+                "zh-TW": "中央左方"
+              }
+            },
+            {
+              "value": "center",
+              "label": {
+                "da": "I midten",
+                "de": "Mitte",
+                "en": "Middle",
+                "es": "Al medio",
+                "fi": "Keskelle",
+                "fr": "Au milieu",
+                "hi": "मध्य में",
+                "it": "Al centro",
+                "ja": "中央",
+                "ko": "중간",
+                "ms": "Tengah",
+                "nb": "Midten",
+                "nl": "Midden",
+                "pt-BR": "Meio",
+                "pt-PT": "Meio",
+                "sv": "Mitten",
+                "th": "ตรงกลาง",
+                "zh-CN": "中间",
+                "zh-TW": "中央"
+              }
+            },
+            {
+              "value": "middle-right",
+              "label": {
+                "da": "Midt på til højre",
+                "de": "Mitte rechts",
+                "en": "Middle right",
+                "es": "Al medio a la derecha",
+                "fi": "Keskellä oikealla",
+                "fr": "Au milieu à droite",
+                "hi": "मध्य में दाईं ओर",
+                "it": "In centro a destra",
+                "ja": "中央右",
+                "ko": "오른쪽 중간",
+                "ms": "Kanan tengah",
+                "nb": "Midt til høyre",
+                "nl": "Rechts midden",
+                "pt-BR": "Meio direito",
+                "pt-PT": "Intermédio à direita",
+                "sv": "Mitten till höger",
+                "th": "ขวากลาง",
+                "zh-CN": "中间居右",
+                "zh-TW": "中央右方"
+              }
+            },
+            {
+              "value": "bottom-left",
+              "label": {
+                "da": "Nederst til venstre",
+                "de": "Unten links",
+                "en": "Bottom left",
+                "es": "Inferior izquierda",
+                "fi": "Alhaalla vasemmalla",
+                "fr": "En bas à gauche",
+                "hi": "सबसे नीचे बाईं ओर",
+                "it": "In basso a sinistra",
+                "ja": "左下",
+                "ko": "왼쪽 하단",
+                "ms": "Kiri bawah",
+                "nb": "Nederst til venstre",
+                "nl": "Linksonder",
+                "pt-BR": "Inferior esquerdo",
+                "pt-PT": "Canto inferior esquerdo",
+                "sv": "Nere till vänster",
+                "th": "ซ้ายล่าง",
+                "zh-CN": "左下方",
+                "zh-TW": "左下角"
+              }
+            },
+            {
+              "value": "bottom",
+              "label": {
+                "da": "Nederst i midten",
+                "de": "Unten mittig",
+                "en": "Bottom middle",
+                "es": "Inferior al medio",
+                "fi": "Alhaalla keskelle",
+                "fr": "En bas au centre",
+                "hi": "नीचे मध्य",
+                "it": "Al centro in basso",
+                "ja": "中央下",
+                "ko": "중간 하단",
+                "ms": "Bawah tengah",
+                "nb": "Nederst i midten",
+                "nl": "Midden onder",
+                "pt-BR": "Centro da parte inferior",
+                "pt-PT": "Parte inferior central",
+                "sv": "Botten mitten",
+                "th": "ตรงกลางด้านล่าง",
+                "zh-CN": "底部中间",
+                "zh-TW": "中央下方"
+              }
+            },
+            {
+              "value": "bottom-right",
+              "label": {
+                "da": "Nederst til højre",
+                "de": "Unten rechts",
+                "en": "Bottom right",
+                "es": "Inferior derecha",
+                "fi": "Alhaalla oikealla",
+                "fr": "En bas à droite",
+                "hi": "सबसे नीचे दाईं ओर",
+                "it": "In basso a destra",
+                "ja": "右下",
+                "ko": "오른쪽 아래",
+                "ms": "Bawah kanan",
+                "nb": "Nederst til høyre",
+                "nl": "Rechtsonder",
+                "pt-BR": "Inferior direito",
+                "pt-PT": "Canto inferior direito",
+                "sv": "Nere till höger",
+                "th": "ขวาล่าง",
+                "zh-CN": "右下方",
+                "zh-TW": "右下角"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "collection",
+      "name": {
+        "da": "Samling",
+        "de": "Kategorie",
+        "en": "Collection",
+        "es": "Colección",
+        "fi": "Kokoelma",
+        "fr": "Collection",
+        "hi": "कलेक्शन",
+        "it": "Collezione",
+        "ja": "コレクション",
+        "ko": "컬렉션",
+        "ms": "Koleksi",
+        "nb": "Samling",
+        "nl": "Collectie",
+        "pt-BR": "Coleção",
+        "pt-PT": "Coleção",
+        "sv": "Produktserie",
+        "th": "คอลเลกชัน",
+        "zh-CN": "收藏",
+        "zh-TW": "商品系列"
+      },
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": {
+            "da": "Samling",
+            "de": "Kategorie",
+            "en": "Collection",
+            "es": "Colección",
+            "fi": "Kokoelma",
+            "fr": "Collection",
+            "hi": "कलेक्शन",
+            "it": "Collezione",
+            "ja": "コレクション",
+            "ko": "컬렉션",
+            "ms": "Koleksi",
+            "nb": "Samling",
+            "nl": "Collectie",
+            "pt-BR": "Coleção",
+            "pt-PT": "Coleção",
+            "sv": "Produktserie",
+            "th": "คอลเลกชัน",
+            "zh-CN": "收藏",
+            "zh-TW": "商品系列"
+          }
+        },
+        {
+          "type": "header",
+          "content": {
+            "da": "Layout",
+            "de": "Layout",
+            "en": "Layout",
+            "es": "Diseño",
+            "fi": "Asettelu",
+            "fr": "Mise en page",
+            "hi": "लेआउट",
+            "it": "Layout",
+            "ja": "レイアウト",
+            "ko": "레이아웃",
+            "ms": "Tata letak",
+            "nb": "Oppsett",
+            "nl": "Indeling",
+            "pt-BR": "Layout",
+            "pt-PT": "Esquema",
+            "sv": "Layout",
+            "th": "เลย์เอาต์",
+            "zh-CN": "布局",
+            "zh-TW": "版面配置"
+          }
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": {
+            "da": "Containerbredde",
+            "de": "Breite des Elements",
+            "en": "Container width",
+            "es": "Ancho del contenedor",
+            "fi": "Säiliön leveys",
+            "fr": "Largeur du conteneur",
+            "hi": "कंटेनर की चौड़ाई",
+            "it": "Larghezza contenitore",
+            "ja": "コンテナーの幅",
+            "ko": "컨테이너 폭",
+            "ms": "Lebar bekas",
+            "nb": "Beholderbredde",
+            "nl": "Containerbreedte",
+            "pt-BR": "Largura do recipiente",
+            "pt-PT": "Largura do recipiente",
+            "sv": "Container-bredd",
+            "th": "ความกว้างของความจุ",
+            "zh-CN": "容器宽度",
+            "zh-TW": "容器寬度"
+          },
+          "default": "50%",
+          "options": [
+            {
+              "value": "25%",
+              "label": {
+                "da": "25 %",
+                "de": "25%",
+                "en": "25%",
+                "es": "25%",
+                "fi": "25 %",
+                "fr": "25 %",
+                "hi": "25%",
+                "it": "25%",
+                "ja": "25%",
+                "ko": "25%",
+                "ms": "25%",
+                "nb": "25 %",
+                "nl": "25%",
+                "pt-BR": "25%",
+                "pt-PT": "25%",
+                "sv": "25 %",
+                "th": "25%",
+                "zh-CN": "25％",
+                "zh-TW": "25%"
+              }
+            },
+            {
+              "value": "33%",
+              "label": {
+                "da": "33 %",
+                "de": "33%",
+                "en": "33%",
+                "es": "33%",
+                "fi": "33 %",
+                "fr": "33 %",
+                "hi": "33%",
+                "it": "33%",
+                "ja": "33%",
+                "ko": "33%",
+                "ms": "33%",
+                "nb": "33 %",
+                "nl": "33%",
+                "pt-BR": "33%",
+                "pt-PT": "33%",
+                "sv": "33 %",
+                "th": "33%",
+                "zh-CN": "33%",
+                "zh-TW": "33%"
+              }
+            },
+            {
+              "value": "50%",
+              "label": {
+                "da": "50 %",
+                "de": "50%",
+                "en": "50%",
+                "es": "50%",
+                "fi": "50 %",
+                "fr": "50 %",
+                "hi": "50%",
+                "it": "50%",
+                "ja": "50%",
+                "ko": "50%",
+                "ms": "50%",
+                "nb": "50 %",
+                "nl": "50%",
+                "pt-BR": "50%",
+                "pt-PT": "50%",
+                "sv": "50 %",
+                "th": "50%",
+                "zh-CN": "50%",
+                "zh-TW": "50%"
+              }
+            },
+            {
+              "value": "66%",
+              "label": {
+                "da": "66 %",
+                "de": "66%",
+                "en": "66%",
+                "es": "66%",
+                "fi": "66 %",
+                "fr": "66 %",
+                "hi": "66%",
+                "it": "66%",
+                "ja": "66%",
+                "ko": "66%",
+                "ms": "66%",
+                "nb": "66 %",
+                "nl": "66%",
+                "pt-BR": "66%",
+                "pt-PT": "66%",
+                "sv": "66 %",
+                "th": "66%",
+                "zh-CN": "66%",
+                "zh-TW": "66%"
+              }
+            },
+            {
+              "value": "75%",
+              "label": {
+                "da": "75 %",
+                "de": "75%",
+                "en": "75%",
+                "es": "75%",
+                "fi": "75 %",
+                "fr": "75 %",
+                "hi": "75%",
+                "it": "75%",
+                "ja": "75%",
+                "ko": "75%",
+                "ms": "75%",
+                "nb": "75 %",
+                "nl": "75%",
+                "pt-BR": "75%",
+                "pt-PT": "75%",
+                "sv": "75 %",
+                "th": "75%",
+                "zh-CN": "75%",
+                "zh-TW": "75%"
+              }
+            },
+            {
+              "value": "100%",
+              "label": {
+                "da": "100 %",
+                "de": "100%",
+                "en": "100%",
+                "es": "100%",
+                "fi": "100 %",
+                "fr": "100 %",
+                "hi": "100%",
+                "it": "100%",
+                "ja": "100%",
+                "ko": "100%",
+                "ms": "100%",
+                "nb": "100 %",
+                "nl": "100%",
+                "pt-BR": "100%",
+                "pt-PT": "100%",
+                "sv": "100 %",
+                "th": "100%",
+                "zh-CN": "100%",
+                "zh-TW": "100%"
+              }
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": {
+            "da": "Lodret justering",
+            "de": "Vertikale Ausrichtung",
+            "en": "Vertical alignment",
+            "es": "Alineación vertical",
+            "fi": "Pystysuuntainen tasaus",
+            "fr": "Alignement vertical",
+            "hi": "लंबवत पंक्तिबद्धता",
+            "it": "Allineamento verticale",
+            "ja": "垂直アラインメント",
+            "ko": "수직 정렬",
+            "ms": "Penjajaran menegak",
+            "nb": "Vertikal justering",
+            "nl": "Verticaal uitlijnen",
+            "pt-BR": "Alinhamento vertical",
+            "pt-PT": "Alinhamento vertical",
+            "sv": "Vertikal justering",
+            "th": "การจัดวางแนวตั้ง",
+            "zh-CN": "垂直对齐",
+            "zh-TW": "垂直對齊"
+          },
+          "info": {
+            "da": "Placering i forhold til andre indholdsblokke på samme række",
+            "de": "Position im Verhältnis zu anderen Inhaltsblöcken in derselben Zeile",
+            "en": "Position relative to other content blocks on the same row",
+            "es": "Posición relativa a otros bloques de contenido en la misma fila",
+            "fi": "Sijainti suhteessa muihin saman rivin sisältölohkoihin",
+            "fr": "Position par rapport à d'autres blocs de contenu sur la même rangée",
+            "hi": "एक ही पंक्ति पर अन्य सामग्री ब्लॉक के सापेक्ष स्थिति",
+            "it": "Posizione relativa ad altri blocchi di contenuto sulla stessa riga",
+            "ja": "同じ行の別のコンテンツブロックに対する相対的な位置",
+            "ko": "같은 열에 있는 다른 콘텐츠 블록과 관련된 위치",
+            "ms": "Kedudukan relatif kepada blok kandungan lain pada baris yang sama",
+            "nb": "Plassering i forhold til andre innholdsblokker på samme rad",
+            "nl": "Positie ten opzichte van andere inhoudsblokken in dezelfde rij",
+            "pt-BR": "Posição em relação a outros blocos de conteúdo na mesma linha",
+            "pt-PT": "Posição em relação a outros blocos de conteúdo na mesma linha",
+            "sv": "Position i förhållande till andra innehållsblock i samma rad",
+            "th": "ตำแหน่งที่สัมพันธ์กับชุดเนื้อหาอื่นในแถวเดียวกัน",
+            "zh-CN": "相对于同一行中其他内容块的位置",
+            "zh-TW": "和同一列其他內容區塊的相對位置"
+          },
+          "default": "center",
+          "options": [
+            {
+              "value": "top",
+              "label": {
+                "da": "Top",
+                "de": "Oben",
+                "en": "Top",
+                "es": "Superior",
+                "fi": "Ylös",
+                "fr": "En haut",
+                "hi": "सबसे ऊपर",
+                "it": "In alto",
+                "ja": "上",
+                "ko": "위쪽",
+                "ms": "Atas",
+                "nb": "Topp",
+                "nl": "Boven",
+                "pt-BR": "Acima",
+                "pt-PT": "Acima",
+                "sv": "Högst upp",
+                "th": "ด้านบน",
+                "zh-CN": "顶部",
+                "zh-TW": "頂部"
+              }
+            },
+            {
+              "value": "center",
+              "label": {
+                "da": "I midten",
+                "de": "Mitte",
+                "en": "Middle",
+                "es": "Al medio",
+                "fi": "Keskelle",
+                "fr": "Au milieu",
+                "hi": "मध्य में",
+                "it": "Al centro",
+                "ja": "中央",
+                "ko": "중간",
+                "ms": "Tengah",
+                "nb": "Midten",
+                "nl": "Midden",
+                "pt-BR": "Meio",
+                "pt-PT": "Meio",
+                "sv": "Mitten",
+                "th": "ตรงกลาง",
+                "zh-CN": "中间",
+                "zh-TW": "中央"
+              }
+            },
+            {
+              "value": "bottom",
+              "label": {
+                "da": "Bund",
+                "de": "Unten",
+                "en": "Bottom",
+                "es": "Inferior",
+                "fi": "Alas",
+                "fr": "En bas",
+                "hi": "नीचे का",
+                "it": "In basso",
+                "ja": "下",
+                "ko": "아래쪽",
+                "ms": "Bawah",
+                "nb": "Bunn",
+                "nl": "Onder",
+                "pt-BR": "Abaixo",
+                "pt-PT": "Abaixo",
+                "sv": "Längst ner",
+                "th": "ด้านล่าง",
+                "zh-CN": "底部",
+                "zh-TW": "底部"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "html",
+      "name": {
+        "da": "Tilpasset HTML",
+        "de": "Personalisierte HTML",
+        "en": "Custom HTML",
+        "es": "HTML personalizado",
+        "fi": "Mukautettu HTML",
+        "fr": "HTML personnalisé",
+        "hi": "कस्टम HTML",
+        "it": "HTML personalizzato",
+        "ja": "HTMLをカスタムする",
+        "ko": "사용자 지정 HTML",
+        "ms": "HTML Tersuai",
+        "nb": "Tilpasset HTML",
+        "nl": "Aangepaste HTML",
+        "pt-BR": "HTML personalizado",
+        "pt-PT": "HTML personalizado",
+        "sv": "Anpassa HTML",
+        "th": "HTML แบบกำหนดเอง",
+        "zh-CN": "自定义 HTML",
+        "zh-TW": "自訂 HTML"
+      },
+      "settings": [
+        {
+          "type": "html",
+          "id": "code",
+          "label": {
+            "da": "HTML",
+            "de": "HTML",
+            "en": "HTML",
+            "es": "HTML",
+            "fi": "HTML",
+            "fr": "HTML",
+            "hi": "HTML",
+            "it": "HTML",
+            "ja": "HTML",
+            "ko": "HTML",
+            "ms": "HTML",
+            "nb": "HTML",
+            "nl": "HTML",
+            "pt-BR": "HTML",
+            "pt-PT": "HTML",
+            "sv": "HTML",
+            "th": "HTML",
+            "zh-CN": "HTML",
+            "zh-TW": "HTML"
+          },
+          "default": {
+            "da": "<div><p>Skriv dit eget brugerdefinerede HTML-indhold. </p></div>",
+            "de": "<div><p>Schreiben Sie Ihren eigenen HTML-Inhalt.</p></div>",
+            "en": "<div><p>Write your own custom HTML content.</p></div>",
+            "es": "<div><p>Escribe tu propio contenido HTML personalizado.</p></div>",
+            "fi": "<div><p>Kirjoita oma mukautettu HTML-sisältö.</p></div>",
+            "fr": "<div><p>Écrivez votre propre contenu HTML personnalisé.</p></div>",
+            "hi": "<div><p>अपनी खुद की कस्टम HTML सामग्री लिखें.</p></div>",
+            "it": "<div><p>Scrivi il tuo contenuto HTML personalizzato.</p></div>",
+            "ja": "<div><p>独自のカスタムHTMLコンテンツを書きます。</p></div>",
+            "ko": "<div><p>나만의 사용자 지정 HTML 콘텐츠를 작성하십시오.</p></div>",
+            "ms": "<div><p>Tulis kandungan HTML tersuai anda sendiri.</p></div>",
+            "nb": "<div><p>Skriv ditt eget tilpasset HTML-innhold.</p></div>",
+            "nl": "<div><p>Schrijf je eigen aangepaste HTML-inhoud.</p></div>",
+            "pt-BR": "<div><p>Escreva seu próprio conteúdo HTML personalizado.</p></div>",
+            "pt-PT": "<div><p>Escreva o seu próprio conteúdo HTML personalizado.</p></div>",
+            "sv": "<div><p>Skriv ditt eget anpassade HTML-innehåll.</p></div>",
+            "th": "<div><p>เขียนเนื้อหา HTML ที่กำหนดเองของคุณ</p></div>",
+            "zh-CN": "<div><p>编写自己的自定义 HTML 内容。</p></div>",
+            "zh-TW": "<div><p>自行撰寫自訂 HTML 內容。</p></div>"
+          }
+        },
+        {
+          "type": "header",
+          "content": {
+            "da": "Layout",
+            "de": "Layout",
+            "en": "Layout",
+            "es": "Diseño",
+            "fi": "Asettelu",
+            "fr": "Mise en page",
+            "hi": "लेआउट",
+            "it": "Layout",
+            "ja": "レイアウト",
+            "ko": "레이아웃",
+            "ms": "Tata letak",
+            "nb": "Oppsett",
+            "nl": "Indeling",
+            "pt-BR": "Layout",
+            "pt-PT": "Esquema",
+            "sv": "Layout",
+            "th": "เลย์เอาต์",
+            "zh-CN": "布局",
+            "zh-TW": "版面配置"
+          }
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": {
+            "da": "Containerbredde",
+            "de": "Breite des Elements",
+            "en": "Container width",
+            "es": "Ancho del contenedor",
+            "fi": "Säiliön leveys",
+            "fr": "Largeur du conteneur",
+            "hi": "कंटेनर की चौड़ाई",
+            "it": "Larghezza contenitore",
+            "ja": "コンテナーの幅",
+            "ko": "컨테이너 폭",
+            "ms": "Lebar bekas",
+            "nb": "Beholderbredde",
+            "nl": "Containerbreedte",
+            "pt-BR": "Largura do recipiente",
+            "pt-PT": "Largura do recipiente",
+            "sv": "Container-bredd",
+            "th": "ความกว้างของความจุ",
+            "zh-CN": "容器宽度",
+            "zh-TW": "容器寬度"
+          },
+          "default": "50%",
+          "options": [
+            {
+              "value": "25%",
+              "label": {
+                "da": "25 %",
+                "de": "25%",
+                "en": "25%",
+                "es": "25%",
+                "fi": "25 %",
+                "fr": "25 %",
+                "hi": "25%",
+                "it": "25%",
+                "ja": "25%",
+                "ko": "25%",
+                "ms": "25%",
+                "nb": "25 %",
+                "nl": "25%",
+                "pt-BR": "25%",
+                "pt-PT": "25%",
+                "sv": "25 %",
+                "th": "25%",
+                "zh-CN": "25％",
+                "zh-TW": "25%"
+              }
+            },
+            {
+              "value": "33%",
+              "label": {
+                "da": "33 %",
+                "de": "33%",
+                "en": "33%",
+                "es": "33%",
+                "fi": "33 %",
+                "fr": "33 %",
+                "hi": "33%",
+                "it": "33%",
+                "ja": "33%",
+                "ko": "33%",
+                "ms": "33%",
+                "nb": "33 %",
+                "nl": "33%",
+                "pt-BR": "33%",
+                "pt-PT": "33%",
+                "sv": "33 %",
+                "th": "33%",
+                "zh-CN": "33%",
+                "zh-TW": "33%"
+              }
+            },
+            {
+              "value": "50%",
+              "label": {
+                "da": "50 %",
+                "de": "50%",
+                "en": "50%",
+                "es": "50%",
+                "fi": "50 %",
+                "fr": "50 %",
+                "hi": "50%",
+                "it": "50%",
+                "ja": "50%",
+                "ko": "50%",
+                "ms": "50%",
+                "nb": "50 %",
+                "nl": "50%",
+                "pt-BR": "50%",
+                "pt-PT": "50%",
+                "sv": "50 %",
+                "th": "50%",
+                "zh-CN": "50%",
+                "zh-TW": "50%"
+              }
+            },
+            {
+              "value": "66%",
+              "label": {
+                "da": "66 %",
+                "de": "66%",
+                "en": "66%",
+                "es": "66%",
+                "fi": "66 %",
+                "fr": "66 %",
+                "hi": "66%",
+                "it": "66%",
+                "ja": "66%",
+                "ko": "66%",
+                "ms": "66%",
+                "nb": "66 %",
+                "nl": "66%",
+                "pt-BR": "66%",
+                "pt-PT": "66%",
+                "sv": "66 %",
+                "th": "66%",
+                "zh-CN": "66%",
+                "zh-TW": "66%"
+              }
+            },
+            {
+              "value": "75%",
+              "label": {
+                "da": "75 %",
+                "de": "75%",
+                "en": "75%",
+                "es": "75%",
+                "fi": "75 %",
+                "fr": "75 %",
+                "hi": "75%",
+                "it": "75%",
+                "ja": "75%",
+                "ko": "75%",
+                "ms": "75%",
+                "nb": "75 %",
+                "nl": "75%",
+                "pt-BR": "75%",
+                "pt-PT": "75%",
+                "sv": "75 %",
+                "th": "75%",
+                "zh-CN": "75%",
+                "zh-TW": "75%"
+              }
+            },
+            {
+              "value": "100%",
+              "label": {
+                "da": "100 %",
+                "de": "100%",
+                "en": "100%",
+                "es": "100%",
+                "fi": "100 %",
+                "fr": "100 %",
+                "hi": "100%",
+                "it": "100%",
+                "ja": "100%",
+                "ko": "100%",
+                "ms": "100%",
+                "nb": "100 %",
+                "nl": "100%",
+                "pt-BR": "100%",
+                "pt-PT": "100%",
+                "sv": "100 %",
+                "th": "100%",
+                "zh-CN": "100%",
+                "zh-TW": "100%"
+              }
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": {
+            "da": "Lodret justering",
+            "de": "Vertikale Ausrichtung",
+            "en": "Vertical alignment",
+            "es": "Alineación vertical",
+            "fi": "Pystysuuntainen tasaus",
+            "fr": "Alignement vertical",
+            "hi": "लंबवत पंक्तिबद्धता",
+            "it": "Allineamento verticale",
+            "ja": "垂直アラインメント",
+            "ko": "수직 정렬",
+            "ms": "Penjajaran menegak",
+            "nb": "Vertikal justering",
+            "nl": "Verticaal uitlijnen",
+            "pt-BR": "Alinhamento vertical",
+            "pt-PT": "Alinhamento vertical",
+            "sv": "Vertikal justering",
+            "th": "การจัดวางแนวตั้ง",
+            "zh-CN": "垂直对齐",
+            "zh-TW": "垂直對齊"
+          },
+          "info": {
+            "da": "Placering i forhold til andre indholdsblokke på samme række",
+            "de": "Position im Verhältnis zu anderen Inhaltsblöcken in derselben Zeile",
+            "en": "Position relative to other content blocks on the same row",
+            "es": "Posición relativa a otros bloques de contenido en la misma fila",
+            "fi": "Sijainti suhteessa muihin saman rivin sisältölohkoihin",
+            "fr": "Position par rapport à d'autres blocs de contenu sur la même rangée",
+            "hi": "एक ही पंक्ति पर अन्य सामग्री ब्लॉक के सापेक्ष स्थिति",
+            "it": "Posizione relativa ad altri blocchi di contenuto sulla stessa riga",
+            "ja": "同じ行の別のコンテンツブロックに対する相対的な位置",
+            "ko": "같은 열에 있는 다른 콘텐츠 블록과 관련된 위치",
+            "ms": "Kedudukan relatif kepada blok kandungan lain pada baris yang sama",
+            "nb": "Plassering i forhold til andre innholdsblokker på samme rad",
+            "nl": "Positie ten opzichte van andere inhoudsblokken in dezelfde rij",
+            "pt-BR": "Posição em relação a outros blocos de conteúdo na mesma linha",
+            "pt-PT": "Posição em relação a outros blocos de conteúdo na mesma linha",
+            "sv": "Position i förhållande till andra innehållsblock i samma rad",
+            "th": "ตำแหน่งที่สัมพันธ์กับชุดเนื้อหาอื่นในแถวเดียวกัน",
+            "zh-CN": "相对于同一行中其他内容块的位置",
+            "zh-TW": "和同一列其他內容區塊的相對位置"
+          },
+          "default": "center",
+          "options": [
+            {
+              "value": "top",
+              "label": {
+                "da": "Top",
+                "de": "Oben",
+                "en": "Top",
+                "es": "Superior",
+                "fi": "Ylös",
+                "fr": "En haut",
+                "hi": "सबसे ऊपर",
+                "it": "In alto",
+                "ja": "上",
+                "ko": "위쪽",
+                "ms": "Atas",
+                "nb": "Topp",
+                "nl": "Boven",
+                "pt-BR": "Acima",
+                "pt-PT": "Acima",
+                "sv": "Högst upp",
+                "th": "ด้านบน",
+                "zh-CN": "顶部",
+                "zh-TW": "頂部"
+              }
+            },
+            {
+              "value": "center",
+              "label": {
+                "da": "I midten",
+                "de": "Mitte",
+                "en": "Middle",
+                "es": "Al medio",
+                "fi": "Keskelle",
+                "fr": "Au milieu",
+                "hi": "मध्य में",
+                "it": "Al centro",
+                "ja": "中央",
+                "ko": "중간",
+                "ms": "Tengah",
+                "nb": "Midten",
+                "nl": "Midden",
+                "pt-BR": "Meio",
+                "pt-PT": "Meio",
+                "sv": "Mitten",
+                "th": "ตรงกลาง",
+                "zh-CN": "中间",
+                "zh-TW": "中央"
+              }
+            },
+            {
+              "value": "bottom",
+              "label": {
+                "da": "Bund",
+                "de": "Unten",
+                "en": "Bottom",
+                "es": "Inferior",
+                "fi": "Alas",
+                "fr": "En bas",
+                "hi": "नीचे का",
+                "it": "In basso",
+                "ja": "下",
+                "ko": "아래쪽",
+                "ms": "Bawah",
+                "nb": "Bunn",
+                "nl": "Onder",
+                "pt-BR": "Abaixo",
+                "pt-PT": "Abaixo",
+                "sv": "Längst ner",
+                "th": "ด้านล่าง",
+                "zh-CN": "底部",
+                "zh-TW": "底部"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "da": "Tilpasset indhold",
+        "de": "Personalisierter Content",
+        "en": "Custom content",
+        "es": "Contenido personalizado",
+        "fi": "Mukautettu sisältö",
+        "fr": "Contenu personnalisé",
+        "hi": "कस्टम सामग्री",
+        "it": "Contenuto personalizzato",
+        "ja": "コンテンツをカスタムする",
+        "ko": "사용자 지정 콘텐츠",
+        "ms": "Kandungan tersuai",
+        "nb": "Tilpasset innhold",
+        "nl": "Aangepaste inhoud",
+        "pt-BR": "Conteúdo personalizado",
+        "pt-PT": "Conteúdo personalizado",
+        "sv": "Anpassat innehåll",
+        "th": "เนื้อหาแบบกำหนดเอง",
+        "zh-CN": "自定义内容",
+        "zh-TW": "自訂內容"
+      },
+      "category": {
+        "da": "Avanceret layout",
+        "de": "Komplizierteres Layout",
+        "en": "Advanced layout",
+        "es": "Diseño avanzado",
+        "fi": "Monimutkaisempi layout",
+        "fr": "Mise en page avancée",
+        "hi": "उन्नत लेआउट",
+        "it": "Layout avanzato",
+        "ja": "高度なレイアウト",
+        "ko": "고급 레이아웃",
+        "ms": "Tata letak lanjutan",
+        "nb": "Avansert oppsett",
+        "nl": "Geavanceerde indeling",
+        "pt-BR": "Layout avançado",
+        "pt-PT": "Esquema avançado",
+        "sv": "Avancerad layout",
+        "th": "เลย์เอาท์ขั้นสูง",
+        "zh-CN": "高级布局",
+        "zh-TW": "進階版面配置"
+      },
+      "blocks": [
+        {
+          "type": "text"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

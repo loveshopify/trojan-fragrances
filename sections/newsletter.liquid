@@ -1,0 +1,353 @@
+<style>
+  .newsletter-wrapper--{{ section.id }} input[type='email']::-webkit-input-placeholder {
+    color: {{ section.settings.text_color }};
+  }
+  .newsletter-wrapper--{{ section.id }} input[type='email']::-moz-placeholder {
+    color: {{ section.settings.text_color }};
+  }
+  .newsletter-wrapper--{{ section.id }} input[type='email']:-ms-input-placeholder {
+    color: {{ section.settings.text_color }};
+  }
+  .newsletter-wrapper--{{ section.id }} input[type='email']::placeholder {
+    color: {{ section.settings.text_color }};
+  }
+  .newsletter-wrapper--{{ section.id }} .input-group--underline {
+    border-bottom: 2px solid {{ section.settings.text_color }};
+  }
+  .newsletter-wrapper--{{ section.id }} .icon {
+    fill: {{ section.settings.text_color }};
+  }
+  .newsletter-wrapper--{{ section.id }} .btn--newsletter__submit {
+    color: {{ section.settings.text_color }};
+    fill: {{ section.settings.text_color }};
+  }
+  .newsletter-wrapper--{{ section.id }} .form-success {
+    color: {{ section.settings.text_color }};
+  }
+
+  {% if section.settings.background_color != blank %}
+    .newsletter-wrapper--{{ section.id }} {
+      background-color: {{ section.settings.background_color }};
+    }
+  {% endif %}
+</style>
+
+<div class="newsletter-wrapper newsletter-wrapper--{{ section.id }} one-whole" data-section-id="{{ section.id }}" data-section-type="newsletter">
+  <div class="page-width">
+    {% form 'customer' %}
+      <h2 class="newsletter__heading">{{ section.settings.heading | escape }}</h2>
+      {% unless section.settings.subheading == blank %}
+        <div class="newsletter__subheading rte">{{ section.settings.subheading }}</div>
+      {% endunless %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <div class="input-group--underline" data-animate>
+        <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter_form.newsletter_placeholder' | t }}" name="contact[email]" class="input-group__field" id="EmailField{{ section.id }}" aria-label="{{ 'general.newsletter_form.newsletter_placeholder' | t }}" autocorrect="off" autocapitalize="off">
+        <div class="input-group__btn input-group__btn--newsletter">
+          <button type="submit" class="btn--newsletter__submit">
+            {{ 'general.newsletter_form.submit' | t }}
+            {% include 'icon-arrow-right' %}
+          </button>
+        </div>
+      </div>
+      <div class="newsletter__message" aria-role="alert">
+        {% if form.posted_successfully? %}
+          <p class="form-success" aria-role="alert">
+            {% unless section.settings.success_message == blank %}
+              {{ section.settings.success_message | escape }}
+            {% endunless %}
+          </p>
+        {% endif %}
+        {{ form.errors | default_errors }}
+      </div>
+    {% endform %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": {
+    "da": "Nyhedsbrev",
+    "de": "Newsletter",
+    "en": "Newsletter",
+    "es": "Boletín",
+    "fi": "Uutiskirje",
+    "fr": "Newsletter",
+    "hi": "न्यूज़लेटर",
+    "it": "Newsletter",
+    "ja": "ニュースレター",
+    "ko": "뉴스레터",
+    "ms": "Surat berita",
+    "nb": "Nyhetsbrev",
+    "nl": "Nieuwsbrief",
+    "pt-BR": "Newsletter",
+    "pt-PT": "Newsletter",
+    "sv": "Nyhetsbrev",
+    "th": "จดหมายข่าว",
+    "zh-CN": "新闻通讯",
+    "zh-TW": "電子報"
+  },
+  "class": "index-section index-section--newsletter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": {
+        "da": "Overskrift",
+        "de": "Titel",
+        "en": "Heading",
+        "es": "Título",
+        "fi": "Otsake",
+        "fr": "Titre",
+        "hi": "शीर्षक",
+        "it": "Heading",
+        "ja": "見出し",
+        "ko": "제목",
+        "ms": "Tajuk",
+        "nb": "Overskrift",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "pt-PT": "Título",
+        "sv": "Rubrik",
+        "th": "ส่วนหัว",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "da": "Tilmeld dig vores nyhedsbrev",
+        "de": "Unseren Newsletter abonnieren",
+        "en": "Subscribe to our newsletter",
+        "es": "Suscríbete a nuestro boletín de noticias",
+        "fi": "Tilaa uutiskirjeemme",
+        "fr": "S'inscrire à la newsletter",
+        "hi": "हमारे न्यूज़लेटर की सदस्यता लें",
+        "it": "Iscriviti alla nostra newsletter",
+        "ja": "ストアからのお知らせを受け取る",
+        "ko": "뉴스 레터 구독",
+        "ms": "Langgan surat berita kami",
+        "nb": "Abonner på nyhetsbrevet vårt",
+        "nl": "Abonneren op onze nieuwsbrief",
+        "pt-BR": "Receber nosso newsletter",
+        "pt-PT": "Subscreva a nossa newsletter",
+        "sv": "Prenumerera på vårt nyhetsbrev",
+        "th": "สมัครรับจดหมายข่าวของเรา",
+        "zh-CN": "订阅我们的新闻通讯",
+        "zh-TW": "訂閱我們的電子報"
+      }
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": {
+        "da": "Underoverskrift",
+        "de": "Unter-Überschrift",
+        "en": "Subheading",
+        "es": "Subtítulo",
+        "fi": "Alaotsikko",
+        "fr": "Sous-titre",
+        "hi": "उपशीर्षक",
+        "it": "Sottotitolo",
+        "ja": "小見出し",
+        "ko": "소제목",
+        "ms": "Sub tajuk",
+        "nb": "Underoverskrift",
+        "nl": "Subkop",
+        "pt-BR": "Subtítulo",
+        "pt-PT": "Subtítulo",
+        "sv": "Underrubrik",
+        "th": "หัวเรื่องย่อย",
+        "zh-CN": "副标题",
+        "zh-TW": "子標題"
+      },
+      "default": {
+        "da": "<p>Reklamer, nye produkter og salg. Direkte i din indbakke.</p>",
+        "de": "<p>Werbeaktionen, neue Produkte und Sonderangebote. Direkt in Ihrem Posteingang.</p>",
+        "en": "<p>Promotions, new products and sales. Directly to your inbox.</p>",
+        "es": "<p>Promociones, nuevos productos y ventas. Directamente a tu bandeja de entrada.</p>",
+        "fi": "<p>Kampanjat, uudet tuotteet ja myynti. Suoraan saapuneet-kansioosi</p>",
+        "fr": "<p>Promotions, nouveaux produits et soldes. Directement dans votre boîte de réception.</p>",
+        "hi": "<p>प्रमोशन, नए उत्पाद और सेल. सीधे आपके इनबॉक्स में.</p>",
+        "it": "<p>Promozioni, nuovi prodotti e offerte. Direttamente nella tua casella di posta.</p>",
+        "ja": "<p>プロモーション、新商品、セールについて、あなたのインボックスに直接知らせる。</p>",
+        "ko": "<p>프로모션, 신제품, 판매. 받은 편지함으로 바로 이동.</p>",
+        "ms": "<p>Promosi, produk baharu dan jualan. Terus ke peti masuk anda.</p>",
+        "nb": "<p>Kampanjer, nye produkter og salg. Direkte i innboksen din.</p>",
+        "nl": "<p>Promoties, nieuwe producten en uitverkoop rechtstreeks in je inbox.</p>",
+        "pt-BR": "<p>Promoções, novos produtos e vendas. Diretamente para sua caixa de entrada.</p>",
+        "pt-PT": "<p>Promoções, novos produtos e ofertas. Diretamente na sua caixa de entrada.</p>",
+        "sv": "<p>Kampanjer, nya produkter och försäljning. Direkt till din inkorg.</p>",
+        "th": "<p>โปรโมชัน สินค้าใหม่ และการลดราคา ตรงสู่กล่องจดหมายเข้าของคุณ</p>",
+        "zh-CN": "<p>促销、新产品和销售。直接发送到您的收件箱。</p>",
+        "zh-TW": "<p>讓您直接在收件匣內收取促銷活動、最新產品和特賣活動訊息。</p>"
+      }
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": {
+        "da": "Udført-meddelelse",
+        "de": "Erfolgsmeldung",
+        "en": "Success message",
+        "es": "Mensaje de éxito",
+        "fi": "Onnistumisilmoitus",
+        "fr": "Message de réussite",
+        "hi": "सफलता का संदेश",
+        "it": "Messaggio operazione riuscita",
+        "ja": "成功のメッセージ",
+        "ko": "성공 메시지",
+        "ms": "Mesej kejayaan",
+        "nb": "Suksessmelding",
+        "nl": "Succesbericht",
+        "pt-BR": "Mensagem de sucesso",
+        "pt-PT": "Mensagem de sucesso",
+        "sv": "Framgångsbudskap",
+        "th": "ข้อความยืนยันการดำเนินการเสร็จสมบูรณ์",
+        "zh-CN": "成功消息",
+        "zh-TW": "成功訊息"
+      },
+      "default": {
+        "da": "Tak for dit abonnement",
+        "de": "Danke für Ihre Anmeldung",
+        "en": "Thanks for subscribing",
+        "es": "Gracias por su suscripción",
+        "fi": "Kiitos tilauksesta",
+        "fr": "Merci pour votre abonnement",
+        "hi": "सदस्यता लेने के लिए धन्यवाद",
+        "it": "Grazie per l'iscrizione",
+        "ja": "ご登録ありがとうございます",
+        "ko": "구독해주셔서 감사드립니다.",
+        "ms": "Terima kasih kerana melanggan",
+        "nb": "Takk for at du abonnerer",
+        "nl": "Bedankt voor het abonneren",
+        "pt-BR": "Obrigado por se inscrever",
+        "pt-PT": "Obrigado pela sua subscrição",
+        "sv": "Tack för att du prenumererar",
+        "th": "ขอขอบคุณที่สมัครรับข้อมูล",
+        "zh-CN": "感谢您订阅",
+        "zh-TW": "感謝您願意訂閱"
+      }
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": {
+        "da": "Tekstfarve",
+        "de": "Textfarbe",
+        "en": "Text color",
+        "es": "Color de la fuente",
+        "fi": "Tekstin väri",
+        "fr": "Couleur du texte",
+        "hi": "टेक्स्ट का रंग",
+        "it": "Colore del testo",
+        "ja": "文字の色",
+        "ko": "텍스트 색상",
+        "ms": "Warna teks",
+        "nb": "Tekstfarge",
+        "nl": "Tekstkleur",
+        "pt-BR": "Cor do texto",
+        "pt-PT": "Cor do texto",
+        "sv": "Textfärg",
+        "th": "สีข้อความ",
+        "zh-CN": "文本颜色",
+        "zh-TW": "文字顏色"
+      },
+      "default": "#3a3a3a"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": {
+        "da": "Baggrundsfarve",
+        "de": "Hintergrundfarbe",
+        "en": "Background color",
+        "es": "Color del fondo",
+        "fi": "Taustaväri",
+        "fr": "Couleur de fond",
+        "hi": "पृष्ठभूमि का रंग",
+        "it": "Colore sfondo",
+        "ja": "背景の色",
+        "ko": "배경색",
+        "ms": "Warna latar belakang",
+        "nb": "Bakgrunnsfarge",
+        "nl": "Achtergrondkleur",
+        "pt-BR": "Cor do fundo",
+        "pt-PT": "Cor do fundo",
+        "sv": "Bakgrundsfärg",
+        "th": "สีพื้นหลัง",
+        "zh-CN": "背景色",
+        "zh-TW": "背景顏色"
+      },
+      "default": "#eae7e0"
+    },
+    {
+      "type": "paragraph",
+      "content": {
+        "da": "Kunder, der tilmelder sig, får føjet deres e-mailadresser til listen \"accepterer markedsføring\". [Se kunder](/admin/customers?query=&accepts_marketing=1)",
+        "de": "E-Mail-Adressen der Kunden, die ein Abonnement bestellen, werden der Liste der Empfänger, die Marketingmaterial akzeptieren, hinzugefügt. [Kunden anzeigen](/admin/customers?query=&accepts_marketing=1)",
+        "en": "Customers who subscribe will have their email address added to the \"accepts marketing\" list. [View customers](/admin/customers?query=&accepts_marketing=1)",
+        "es": "Se añadirá la dirección de correo electrónico de los clientes que se suscriban a la lista \"acepta marketing\". [Ver clientes](/admin/customers?query=&accepts_marketing=1)",
+        "fi": "Tilaavien asiakkaiden sähköpostiosoitteet lisätään \"hyväksyy markkinoinnin\" ‑luetteloon. [Näytä asiakkaat](/admin/customers?query=&accepts_marketing=1)",
+        "fr": "Les clients qui s'abonnent verront leur adresse e-mail ajoutée à la liste « Accepte le marketing ». [Afficher les clients](/admin/customers?query=&accepts_marketing=1)",
+        "hi": "जो ग्राहक सदस्यता लेते हैं, उनके ईमेल पते को \"मार्केटिंग स्वीकार करता है\" सूची में जोड़ा जाएगा. [ग्राहक देखें](/admin/customers?query=&accepts_marketing=1)",
+        "it": "L'indirizzo email dei clienti che si iscrivono verrà aggiunto all'elenco \"Accetta marketing\". [Visualizza clienti](/admin/customers?query=&accepts_marketing=1)",
+        "ja": "登録するお客様は、メールアドレスが「マーケティングを受け入れる」リストに追加されます。[お客様を表示](/admin/customers?query=&accepts_marketing=1)",
+        "ko": "구독하는 고객은 \"마케팅 수락\"목록에 자신의 이메일 주소가 추가됩니다. [고객보기](/admin/customers? query=& accepts_marketing=1)",
+        "ms": "E-mel pelanggan yang melanggan akan ditambah ke senarai \"menerima pemasaran\". [Lihat pelanggan](/admin/pelanggan?Query=&accepts_marketing=1)",
+        "nb": "Kunder som abonnerer får sin e-postadresse lagt til listen «godtar markedsføring». [Se kunder](/admin/customers?query=&accepts_marketing=1)",
+        "nl": "Het e-mailadres van klanten die zich aanmelden wordt toegevoegd aan de lijst Accepteert marketing. [Klanten weergeven](/admin/customers?query=&accepts_marketing=1)",
+        "pt-BR": "O e-mail dos clientes que se inscreverem será adicionado à lista \"aceita marketing\". [Visualizar clientes](/admin/customers?query=&accepts_marketing=1)",
+        "pt-PT": "O endereço de e-mail dos clientes que subscreverem será adicionado à lista de \"aceitam marketing\". [Ver clientes](/admin/customers?query=&accepts_marketing=1)",
+        "sv": "Kunder som prenumererar kommer att ha sin e-postadress tillagd i listan \"accepterar marknadsföring\". [Visa kunder](/ admin / kunder? Query = & accepts_marketing = 1)",
+        "th": "อีเมลของลูกค้าที่สมัครรับข้อมูลจะถูกเพิ่มในรายการ \"รับการตลาด\" [ดูลูกค้า](/admin/customers?query=&accepts_marketing=1)",
+        "zh-CN": "进行了订阅的客户的电子邮件地址将添加到“接受营销”列表中。[查看客户](/admin/customers?query=&accepts_marketing=1)",
+        "zh-TW": "顧客訂閱後，電子郵件地址便會被加進「接受行銷」清單。[檢視顧客](/admin/customers?query=&accepts_marketing=1)"
+      }
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "da": "Nyhedsbrev",
+        "de": "Newsletter",
+        "en": "Newsletter",
+        "es": "Boletín",
+        "fi": "Uutiskirje",
+        "fr": "Newsletter",
+        "hi": "न्यूज़लेटर",
+        "it": "Newsletter",
+        "ja": "ニュースレター",
+        "ko": "뉴스레터",
+        "ms": "Surat berita",
+        "nb": "Nyhetsbrev",
+        "nl": "Nieuwsbrief",
+        "pt-BR": "Newsletter",
+        "pt-PT": "Newsletter",
+        "sv": "Nyhetsbrev",
+        "th": "จดหมายข่าว",
+        "zh-CN": "新闻通讯",
+        "zh-TW": "電子報"
+      },
+      "category": {
+        "da": "Kampagne",
+        "de": "Promotional",
+        "en": "Promotional",
+        "es": "Promocional",
+        "fi": "Mainonnallinen",
+        "fr": "Promotionnel",
+        "hi": "प्रमोशनल",
+        "it": "Promozionale",
+        "ja": "プロモーション用",
+        "ko": "프로모션",
+        "ms": "Promosi",
+        "nb": "Kampanjer",
+        "nl": "Promotioneel",
+        "pt-BR": "Promocional",
+        "pt-PT": "Promocional",
+        "sv": "Kampanjer",
+        "th": "ส่งเสริมการขาย",
+        "zh-CN": "促销",
+        "zh-TW": "宣傳活動"
+      }
+    }
+  ]
+}
+{% endschema %}

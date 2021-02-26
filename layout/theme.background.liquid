@@ -1,0 +1,110 @@
+{% if
+  request.page_type == 'blog'
+  or request.page_type == 'collection'
+  or request.page_type == 'list-collections'
+  or request.page_type == 'search'
+%}
+  {%- assign hide_footer = true -%}
+{% endif %}
+
+<!doctype html>
+<html class="supports-no-js {% if hide_footer %} site-footer--hidden{% endif %}" lang="{{ shop.locale }}">
+<head>
+  <meta charset="utf-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="{{ settings.color_primary }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {% if settings.favicon != blank %}
+    <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+  {% endif %}
+
+  <title>
+    {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+  </title>
+
+  {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+
+  {% include 'social-meta-tags' %}
+
+  {{ content_for_header }}
+
+  {% include 'critical-css' %}
+  {% include 'load-css' %}
+
+  <script>
+    var theme = {
+      stylesheet: "{{ 'theme.scss.css' | asset_url }}",
+      strings: {
+        addToCart: {{ 'products.product.add_to_cart' | t | json }},
+        soldOut: {{ 'products.product.sold_out' | t | json }},
+        unavailable: {{ 'products.product.unavailable' | t | json }},
+        addItemSuccess: {{ 'products.product.item_added_to_cart' | t | json }},
+        viewCart: {{ 'products.product.view_cart' | t | json }},
+        cartError: {{ 'cart.general.cart_error' | t | json }},
+        cartQuantityError: {{ 'cart.general.cart_quantity_error_html' | t: quantity: "[quantity]", title: "[title]" | json }},
+        regularPrice: {{ 'products.product.regular_price' | t | json }},
+        salePrice: {{ 'products.product.sale_price' | t | json }},
+        unitPrice: {{ 'products.product.unit_price' | t | json }},
+        unitPriceSeparator: {{ 'general.accessibility.unit_price_separator' | t | json }},
+        newsletter: {
+          blankError: {{ 'general.newsletter_form.blank_error' | t | json }},
+          invalidError: {{ 'general.newsletter_form.invalid_error' | t | json }}
+        },
+        map: {
+          zeroResults: {{ 'sections.map.address_no_results' | t | json }},
+          overQueryLimit: {{ 'sections.map.address_query_limit_html' | t | json }},
+          authError: {{ 'sections.map.auth_error_html' | t | json }},
+          addressError: {{ 'sections.map.address_error' | t | json }}
+        },
+        slideshow: {
+          loadSlideA11yString: {{ 'sections.slider.load_slide' | t: slide_number: '[slide_number]' | json }},
+          activeSlideA11yString: {{ 'sections.slider.active_slide' | t: slide_number: '[slide_number]' | json }}
+        }
+      },
+      isOnline: true,
+      moneyFormat: {{ shop.money_format | json }},
+      mediaQuerySmall: 750,
+      mediaQueryMedium: 990
+    };
+
+    {% if request.page_type contains 'customers/' %}
+      theme.countryOptionTags = {{ all_country_option_tags | json}};
+    {% endif %}
+
+    document.documentElement.className = document.documentElement.className.replace('supports-no-js', '');
+  </script>
+
+  <script src="{{ 'lazysizes.min.js' | asset_url }}" async="async"></script>
+  <script src="{{ 'vendor.min.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'theme.min.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'custom.js' | asset_url }}" defer="defer"></script>
+</head>
+
+<body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{% if request.page_type != blank %}{{ request.page_type | handle }}{% else %}none{% endif %} data-animations">
+
+  <a class="visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+  {% section 'header' %}
+
+  <div class="main-content{% if request.page_type == blank %} main-content--no-template{% endif %}" data-drawer-push>
+    <div class="main-content__wrapper">
+      <main class="content-for-layout" id="MainContent" role="main">
+        {{ content_for_layout }}
+      </main>
+
+      {% section 'footer' %}
+    </div>
+  </div>
+
+  {% include 'cart-drawer' %}
+  <ul hidden>
+    <li id="a11y-refresh-page-message">{{ 'general.accessibility.refresh_page' | t }}</li>
+    <li id="a11y-selection-message">{{ 'general.accessibility.selection_help' | t }}</li>
+  </ul>
+</body>
+</html>

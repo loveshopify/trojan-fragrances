@@ -1,0 +1,227 @@
+<div class="article" data-section-id="{{ section.id }}" data-section-type="article-template">
+
+  {% if article.image %}
+    <div class="section-header-image-wrapper">
+      <div class="section-header-image{% if section.settings.image_parallax %} section-header-image--parallax{% endif %} lazyload" data-bgset="{% include 'bgset', image: article.image %}"></div>
+
+      <noscript>
+        <div class="section-header-image" style="background-image: {{ article.image | img_url: 'master' }}"></div>
+      </noscript>
+    </div>
+  {% endif %}
+
+  <div class="page-width">
+    <div class="article__wrapper grid">
+      <div class="article__content article__content--large grid__item medium-up--ten-twelfths medium-up--push-one-twelfth">
+        <header class="article__header separator" data-animate>
+          {% if section.settings.show_date %}
+            <span class="article__date text-small--uppercase">
+              {{ article.published_at | time_tag: format: 'date' }}
+            </span>
+          {% endif %}
+          {% if section.settings.show_author %}
+            <span class="article__author text-small--uppercase">
+              {{ article.author }}
+            </span>
+          {% endif %}
+          <h1 class="article__title h2">{{ article.title }}</h1>
+        </header>
+
+        <div class="article__body rte" itemprop="articleBody">
+          {{ article.content }}
+        </div>
+      </div>
+
+      {% if section.settings.show_share_buttons %}
+        {% if settings.share_facebook or settings.share_twitter or settings.share_pinterest %}
+          <div class="article__share-desktop grid__item medium-up--two-twelfths">
+            <div class="article__share-desktop-wrapper">
+              {% include 'social-sharing', type: 'article', share_title: article.title, share_permalink: article.url, share_image: article.image %}
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+  {% if section.settings.show_share_buttons %}
+    {% if settings.share_facebook or settings.share_twitter or settings.share_pinterest %}
+      <div class="article__share-mobile">
+          {% include 'social-sharing', type: 'mobile', share_title: article.title, share_permalink: article.url, share_image: article.image %}
+      </div>
+    {% endif %}
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": {
+    "da": "Opslag",
+    "de": "Posts",
+    "en": "Posts",
+    "es": "Publicaciones",
+    "fi": "Julkaisut",
+    "fr": "Articles",
+    "hi": "पोस्ट",
+    "it": "Articoli",
+    "ja": "投稿",
+    "ko": "게시물",
+    "ms": "Siaran",
+    "nb": "Innlegg",
+    "nl": "Berichten",
+    "pt-BR": "posts",
+    "pt-PT": "Publicações",
+    "sv": "Inlägg",
+    "th": "โพสต์",
+    "zh-CN": "文章",
+    "zh-TW": "貼文"
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "image_parallax",
+      "label": {
+        "da": "Vis parallakse animationer for billeder",
+        "de": "Parallax-Animation für Bild anzeigen",
+        "en": "Show image parallax animation",
+        "es": "Mostrar animación de paralaje de imagen",
+        "fi": "Näytä kuvaparallaksianimaatio",
+        "fr": "Afficher l'animation en parallaxe",
+        "hi": "इमेज फुटर एनीमेशन दिखाएं",
+        "it": "Mostra animazione parallasse immagine",
+        "ja": "画像のパララックスアニメーションを表示する",
+        "ko": "이미지 패럴랙스 애니메이션 표시",
+        "ms": "Tunjukkan animasi bezalihat imej",
+        "nb": "Vis parallakse animasjoner for bilder",
+        "nl": "Parallax-animatie voor afbeelding weergeven",
+        "pt-BR": "Exibir animação de paralaxe da imagem",
+        "pt-PT": "Mostrar animação de paralaxe da imagem",
+        "sv": "Visa bildparallaxanimering",
+        "th": "แสดงการเคลื่อนไหวภาพพารัลแลกซ์",
+        "zh-CN": "显示图片视差动画",
+        "zh-TW": "顯示圖片的視差捲動動畫"
+      },
+      "info": {
+        "da": "Vises kun på computere",
+        "de": "Wird nur auf dem Desktop angezeigt",
+        "en": "Only shows on desktop",
+        "es": "Solo se muestra en el escritorio",
+        "fi": "Näytetään vain työpöydällä",
+        "fr": "Ne s'affiche que sur le bureau",
+        "hi": "केवल डेस्कटॉप पर दिखाता है",
+        "it": "Appare solo su desktop",
+        "ja": "デスクトップにのみ表示する",
+        "ko": "데스크톱에서만 표시",
+        "ms": "Hanya tunjukkan di komputer meja",
+        "nb": "Viser bare på datamaskin",
+        "nl": "Wordt alleen op desktop weergegeven",
+        "pt-BR": "Aparece apenas na área de trabalho",
+        "pt-PT": "Surge apenas na área de trabalho",
+        "sv": "Visas bara på skrivbordet",
+        "th": "แสดงบนเดสก์ท็อปเท่านั้น",
+        "zh-CN": "仅在桌面上显示",
+        "zh-TW": "只顯示在桌面上"
+      }
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": {
+        "da": "Vis dato",
+        "de": "Datum anzeigen",
+        "en": "Show date",
+        "es": "Mostrar fecha",
+        "fi": "Näytä päivämäärä",
+        "fr": "Afficher la date",
+        "hi": "दिनांक दिखाएं",
+        "it": "Mostra data",
+        "ja": "日付を表示する",
+        "ko": "날짜 표시",
+        "ms": "Tunjukkan tarikh",
+        "nb": "Vis dato",
+        "nl": "Datum weergeven",
+        "pt-BR": "Exibir data",
+        "pt-PT": "Mostrar data",
+        "sv": "Visa datum",
+        "th": "แสดงวันที่",
+        "zh-CN": "显示日期",
+        "zh-TW": "顯示日期"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": {
+        "da": "Vis forfatter",
+        "de": "Autor anzeigen",
+        "en": "Show author",
+        "es": "Mostrar autor",
+        "fi": "Näytä tekijä",
+        "fr": "Afficher l'auteur",
+        "hi": "लेखक दिखाएं",
+        "it": "Mostra autore",
+        "ja": "執筆者を表示する",
+        "ko": "작성자 표시",
+        "ms": "Tunjukkan pengarang",
+        "nb": "Vis forfatter",
+        "nl": "Auteur weergeven",
+        "pt-BR": "Exibir autor",
+        "pt-PT": "Mostrar autor",
+        "sv": "Visa författare",
+        "th": "แสดงผู้เขียน",
+        "zh-CN": "显示作者",
+        "zh-TW": "顯示作者"
+      },
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": {
+        "da": "Aktivér deling for blogartikler",
+        "de": "Teilen von Blog-Beiträgen aktivieren",
+        "en": "Enable sharing for blog articles",
+        "es": "Habilitar el uso compartido de artículos de blog",
+        "fi": "Ota blogi-artikkelien jakaminen käyttöön",
+        "fr": "Activer le partage pour les articles de blog",
+        "hi": "ब्लॉग लेखों के लिए शेयर करना सक्षम करें",
+        "it": "Abilita condivisione per gli articoli del blog",
+        "ja": "ブログ記事の共有を有効にする",
+        "ko": "블로그 기사 공유 사용",
+        "ms": "Dayakan perkongsian untuk artikel blog",
+        "nb": "Aktiver deling for bloggartikler",
+        "nl": "Delen van blogartikelen toestaan",
+        "pt-BR": "Habilitar compartilhamento para artigos de blog",
+        "pt-PT": "Ativar partilha para artigos no blogue",
+        "sv": "Aktivera delning för bloggartiklar",
+        "th": "เปิดใช้งานการแชร์บทความบล็อก",
+        "zh-CN": "启用博客文章分享",
+        "zh-TW": "啟用部落格文章分享功能"
+      },
+      "info": {
+        "da": "Sørg for, at du har aktiveret deling på sociale medier under Generelle indstillinger",
+        "de": "Vergewissern Sie sich, dass Sie in den allgemeinen Einstellungen das Teilen in sozialen Netzwerken aktiviert haben",
+        "en": "Make sure you have enabled social sharing in general settings",
+        "es": "Asegúrate de haber habilitado la opción para compartir en redes sociales en la configuración general.",
+        "fi": "Varmista, että olet ottanut sosiaalisen median jakamisen käyttöön yleisissä asetuksissa",
+        "fr": "Assurez-vous d'avoir activé le partage social dans les paramètres généraux",
+        "hi": "सुनिश्चित करें कि आपने सामान्य सेटिंग में सोशल शेयरिंग सक्षम किया है",
+        "it": "Assicurati di aver abilitato la condivisione sui social nelle impostazioni generali",
+        "ja": "一般設定でソーシャル共有を有効にしていることを確認してください。",
+        "ko": "일반 설정에서 소셜 공유가 되었는지 확인하십시오.",
+        "ms": "Pastikan anda telah mendayakan perkongsian sosial dalam tetapan umum",
+        "nb": "Sørg for at du har aktivert sosial deling i generelle innstillinger",
+        "nl": "Zorg ervoor dat je delen via social media hebt ingeschakeld in de algemene instellingen",
+        "pt-BR": "Verifique se você habilitou o compartilhamento em redes sociais nas configurações gerais",
+        "pt-PT": "Certifique-se de que ativou a partilha nas redes sociais nas definições gerais",
+        "sv": "Se till att du har aktiverat social delning i allmänna inställningar",
+        "th": "ตรวจสอบให้แน่ใจว่าคุณได้เปิดใช้งานการแชร์บนโซเชียลในการตั้งค่าทั่วไป",
+        "zh-CN": "确保您在“通用”设置中启用了社交分享",
+        "zh-TW": "請確定您已在一般設定內啟用社群分享功能"
+      },
+      "default": true
+    }
+  ]
+}
+{% endschema %}

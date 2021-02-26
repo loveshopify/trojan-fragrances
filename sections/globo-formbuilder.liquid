@@ -1,0 +1,38 @@
+<div class="globo-formbuilder" data-id={{section.settings.form_id}} ></div>
+{% schema %}
+  {
+    "name": "Form",
+    "settings": [
+        {
+          "type": "select",
+          "id": "form_id",
+          "label": "Select form to display",
+          "default": "190",
+          "options": [
+                            {
+                    "value": "190",
+                    "label": "Mailchimp form"
+                },                            {
+                    "value": "203",
+                    "label": "Shopify Registration form"
+                }                      ]
+        }
+    ],
+    "presets": [
+        {
+          "name": {
+            "en": "Form"
+          },
+          "category": {
+            "en": "Powerful Contact Form Builder"
+          }
+        }
+      ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

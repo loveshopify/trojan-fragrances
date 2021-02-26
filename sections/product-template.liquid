@@ -1,0 +1,514 @@
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign current_variant_sale = false -%}
+{% if current_variant.compare_at_price > current_variant.price %}
+  {%- assign current_variant_sale = true -%}
+{% endif %}
+
+<div class="product-template" data-section-id="{{ section.id }}" data-section-type="product-template" data-variant-id="{{ current_variant.id }}" itemscope itemtype="http://schema.org/Product">
+
+  <meta itemprop="name" content="{{ product.title }}">
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product.featured_image.src | img_url: 'grande' }}">
+
+  {% comment %}
+  ------------------------------------------------------------------------------
+  Product Featured Image
+  ------------------------------------------------------------------------------
+  {% endcomment %}
+   <div class="product__content">
+     <div id="prodotto">
+  <div class="sinistra">
+    {% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+    {% for image in product.images %}
+      {% if image.attached_to_variant? or image == featured_image %}
+
+        {% assign max_height = 650 %}
+        {% assign max_width = 980 %}
+        {% assign max_aspect_ratio = 1.50769 %}
+
+        {% comment %}
+        We need to figure out the max width we want the image to be on the page
+        based on the aspect ratio of the image and based on the size of the
+        image.
+        {% endcomment %}
+        {% if image.aspect_ratio < max_aspect_ratio%}
+          {% if image.height < max_height %}
+            {% assign max_width = image.width | times: image.aspect_ratio | round %}
+          {% else %}
+            {% assign max_width = max_height | times: image.aspect_ratio | round %}
+          {% endif %}
+        {% else %}
+          {% if image.width < max_width %}
+            {% assign max_width = image.width %}
+          {% endif %}
+        {% endif %}
+
+        {% comment %}
+        Create a container for the image that will never go wider than the
+        max width we determined above, and that will keep the same aspect ratio
+        of the image by using 'padding-top'.
+        {% endcomment %}
+        <div class="product__image-container{% unless featured_image == image %} hide{% endunless %}" style="max-width: {{ max_width }}px" data-id="{{ image.id }}" data-variant-image-toggle-hide>
+          <a class="product__image-wrapper product-slideshow__open" href="{{ featured_image | img_url: 'master' }}" style="padding-top:{{ 1 | divided_by: image.aspect_ratio | times: 100}}%" aria-label="{{ 'sections.product_template.open_image_slideshow' | t }}" data-id="{{ image.id }}">
+
+            {% comment %}
+            Only give the visible variant image a src so that it shows an image
+            as quickly as possible. Let lazysizes.js load in the other images when
+            they become visible.
+            {% endcomment %}
+            {% assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+            <img class="product__image lazyload"
+                {% if featured_image == image %}src="{{ image | img_url: '300x'}}"{% endif %}
+                data-src="{{ img_url }}"
+                data-widths="[360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                data-aspectratio="{{ image.aspect_ratio }}"
+                data-sizes="auto"
+                alt="{{ image.alt | escape }}"
+                data-variant-image>
+          </a>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {% comment %}
+  ------------------------------------------------------------------------------
+  Product Form & Description
+  ------------------------------------------------------------------------------
+  {% endcomment %}
+
+    <div class="grid">
+      <div class="destra">
+        <div class="product__content-header">
+
+          {% if section.settings.show_vendor %}
+            <span class="product__vendor text-small text-center" itemprop="brand">{{ product.vendor }}</span>
+          {% endif %}
+
+          <h1 class="product__title h2" itemprop="name">{{ product.title }}</h1>
+          <p class="product__price {% if current_variant_sale %} product__price--sale{% endif %}" data-product-price aria-live="polite">
+
+            <span class="product__sale-price-label visually-hidden">{{ 'products.product.sale_price' | t }}</span>
+            <span class="product__regular-price-label visually-hidden">{{ 'products.product.price' | t }}</span>
+            <span class="product__current-price" data-regular-price>{{ current_variant.price | money }}</span>
+
+            <span class="product__compare-price-label visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+            <s class="product__compare-price" data-compare-price>{{ current_variant.compare_at_price | money }}</s>
+
+            {% include 'product-unit-price', variant: current_variant %}
+          </p>
+
+          {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
+            <div class="product__policies rte">
+              {%- if shop.taxes_included -%}
+                {{ 'products.product.include_taxes' | t }}
+              {%- endif -%}
+              {%- if shop.shipping_policy.body != blank -%}
+                {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+        </div>
+        <div class="product__content-main">
+          
+
+          <div class="product__form-container" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <div class="product__form-wrapper">
+              <meta itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
+              <meta itemprop="priceCurrency" content="{{ cart.currency.iso_code }}">
+              <link itemprop="availability" href="http://schema.org/{% if current_variant.available %}InStock{% else %}OutOfStock{% endif %}">
+
+              {% include 'product-form' %}
+
+              {% if section.settings.show_share_buttons %}
+                {% if settings.share_facebook or settings.share_twitter or settings.share_pinterest %}
+                  <div class="product__share-wrapper small--hide">
+                    <div class="product__share">
+                        {% include 'social-sharing', type: "product", links: 'bottom' share_title: product.title, share_permalink: product.url, share_image: product %}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        	<div class="product__description rte" itemprop="description" class="rte">
+            {{ product.description }}
+          </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  {% comment %}
+  ------------------------------------------------------------------------------
+  Product Share Buttons
+  ------------------------------------------------------------------------------
+  {% endcomment %}
+  {% if section.settings.show_share_buttons %}
+    {% if settings.share_facebook or settings.share_twitter or settings.share_pinterest %}
+      <div class="product__share-wrapper product__share-wrapper--mobile medium-up--hide">
+        <div class="product__share">
+            {% include 'social-sharing', type: 'mobile', share_title: product.title, share_permalink: product.url, share_image: product %}
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+
+
+  {% comment %}
+  ------------------------------------------------------------------------------
+  Product Image Gallery
+  ------------------------------------------------------------------------------
+  {% endcomment %}
+  {% if product.images.size > 1 %}
+
+    {% comment %}
+      If we are hiding variant images which are displayed at the top of the
+      page, then find total number images not set as a variant image or as the
+      featured image.
+
+      We need the total number of images to be displayed so that we know what
+      arrangement the images need to be positioned in, i.e. rows of 3 or 2
+      images.
+    {% endcomment %}
+
+    {% if section.settings.hide_variant_images %}
+      {% assign totalImages = 0 %}
+      {% for image in product.images %}
+        {% unless image.attached_to_variant? %}
+          {% assign totalImages = totalImages | plus: 1 %}
+        {% endunless %}
+      {% endfor %}
+    {% else %}
+      {% assign totalImages = product.images.size %}
+    {% endif %}
+
+    {% comment %}
+      Insert images into rows of 3 and/or 2 depending on the total number of
+      images.
+    {% endcomment %}
+    {% assign totalModulus = totalImages | modulo:3 %}
+
+    {% if totalImages == 1 %}<div class="page-width">{% endif %}
+
+    <div class="product__subimage-list product__subimage-list--r{{ totalModulus }}{% if totalImages == 1 %} product__subimage-list--single{% endif %}">
+
+      {% for image in product.images %}
+
+        {% unless image.attached_to_variant? and section.settings.hide_variant_images %}
+
+          <div class="product__subimage-list-item">
+            <a href="{{ image.src | img_url: 'master' }}" class="product__subimage-container product-slideshow__open" aria-label="{{ 'sections.product_template.open_image_slideshow' | t }}" data-id="{{ image.id }}">
+              {% assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+              <img class="product__subimage lazyload"
+                  data-src="{{ img_url }}"
+                  data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                  data-aspectratio="{{ image.aspect_ratio }}"
+                  data-sizes="auto"
+                  data-parent-fit="cover"
+                  alt="{{ image.alt | escape }}">
+
+              <noscript>
+                <img src="{{ image | img_url: 'master' }}" alt="{{ image.alt | escape }}" class="product__subimage">
+              </noscript>
+            </a>
+          </div>
+
+        {%  endunless %}
+      {% endfor %}
+    </div>
+
+    {% if totalImages == 1 %}</div>{% endif %}
+  {% endif %}
+
+  {% comment %}
+  ------------------------------------------------------------------------------
+  Product Slideshow
+  ------------------------------------------------------------------------------
+  {% endcomment %}
+  {% unless product.images.size == 0 %}
+    <div class="product-slideshow{% if product.images.size == 1 %} product-slideshow--single{% endif %} critical-hide" aria-hidden="true">
+      <button class="product-slideshow__close btn btn--clear btn--square" tabindex="-1" data-product-slideshow-close>{% include 'icon-close' %}</button>
+
+      <div class="product-slideshow__content">
+        <div class="product-slideshow__slide-list slider">
+          {% for image in product.images %}
+            <div class="product-slideshow__slide slider__slide{% if forloop.first %} slider__slide--active {% endif %}" data-id="{{ image.id }}" data-product-slideshow-slide>
+              <div class="product-slideshow__slide-image-wrapper">
+                {% assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+                <img class="product-slideshow__slide-image lazyload fade-in"
+                    data-src="{{ img_url }}"
+                    data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                    data-aspectratio="{{ image.aspect_ratio }}"
+                    data-sizes="auto"
+                    data-parent-fit="contain"
+                    alt="{{ image.alt | escape }}">
+                {% include 'spinner' %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% unless product.images.size == 1 %}
+          <div class="product-slideshow__controls">
+            <button class="product-slideshow__previous btn btn--secondary btn--square" tabindex="-1" data-product-slideshow-previous>
+              {% include 'icon-arrow-left' %}
+              <span class="visually-hidden">{{ 'general.pagination.previous' | t }}</span>
+            </button>
+
+            <div class="product-slideshow__slide-select-list">
+              {% for image in product.images %}
+                <button class="product-slideshow__slide-select {% if forloop.first %} product-slideshow__slide-select--active{% endif %}" tabindex="-1" data-product-slideshow-select="{{ forloop.index0 }}">
+                  <span class="visually-hidden">{{ 'sections.product_template.slide' | t: number: forloop.index}}</span>
+                </button>
+              {% endfor %}
+            </div>
+
+            <button class="product-slideshow__next btn btn--secondary btn--square" tabindex="-1" data-product-slideshow-next>
+              {% include 'icon-arrow-right' %}
+              <span class="visually-hidden">{{ 'general.pagination.next' | t }}</span>
+            </button>
+          </div>
+        {% endunless %}
+      </div>
+    </div>
+  {% endunless %}
+
+  {% comment %}
+  ------------------------------------------------------------------------------
+  Product Data
+  ------------------------------------------------------------------------------
+  {% endcomment %}
+  <script type="application/json" data-product-json>
+    {{ product | json }}
+  </script>
+</div>
+
+{% schema %}
+{
+  "name": {
+    "da": "Produktsider",
+    "de": "Produktseiten",
+    "en": "Product pages",
+    "es": "Páginas de productos",
+    "fi": "Tuotesivut",
+    "fr": "Pages de produits",
+    "hi": "उत्पाद पेज",
+    "it": "Pagine di prodotto",
+    "ja": "商品ページ",
+    "ko": "제품 페이지",
+    "ms": "Halaman produk",
+    "nb": "Produktsider",
+    "nl": "Productpagina's",
+    "pt-BR": "Páginas de produtos",
+    "pt-PT": "Páginas de produtos",
+    "sv": "Produktsidor",
+    "th": "หน้าสินค้า",
+    "zh-CN": "产品页面",
+    "zh-TW": "產品頁面"
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_quantity_selector",
+      "label": {
+        "da": "Vis antalsvælger",
+        "de": "Mengenauswahl anzeigen",
+        "en": "Show quantity selector",
+        "es": "Mostrar selector de cantidad",
+        "fi": "Näytä määrän valitsin",
+        "fr": "Afficher le sélecteur de quantité",
+        "hi": "मात्रा चयनकर्ता दिखाएं",
+        "it": "Mostra selettore quantità",
+        "ja": "数量セレクターを表示する",
+        "ko": "수량 선택기 표시",
+        "ms": "Tunjukkan pemilih kuantiti",
+        "nb": "Vis mengdevelger",
+        "nl": "Hoeveelheidskiezer weergeven",
+        "pt-BR": "Exiba um seletor de quantidade",
+        "pt-PT": "Mostrar seletor de quantidade",
+        "sv": "Visa kvantitetsväljare",
+        "th": "แสดงตัวเลือกปริมาณ",
+        "zh-CN": "显示数量选择器",
+        "zh-TW": "顯示數量選擇器"
+      },
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variant_labels",
+      "label": {
+        "da": "Vis variantlabels",
+        "de": "Varianten-Etiketten anzeigen",
+        "en": "Show variant labels",
+        "es": "Mostrar etiquetas de variantes",
+        "fi": "Näytä vaihtoehtoiset tarrat",
+        "fr": "Afficher le nom des variantes",
+        "hi": "वेरिएंट लेबल दिखाएं",
+        "it": "Mostra etichette varianti",
+        "ja": "バリエーションのラベルを表示する",
+        "ko": "이형 상품 레이블 표시",
+        "ms": "Tunjukkan label varian",
+        "nb": "Vis variantetiketter",
+        "nl": "Variantlabels weergeven",
+        "pt-BR": "Exibir etiquetas variantes",
+        "pt-PT": "Mostrar etiquetas de variantes",
+        "sv": "Visa variantetiketter",
+        "th": "แสดงป้ายกำกับตัวเลือกสินค้า",
+        "zh-CN": "显示多属性标签",
+        "zh-TW": "顯示子類選項標籤"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": {
+        "da": "Vis produktleverandør",
+        "de": "Produktverkäufer anzeigen",
+        "en": "Show product vendor",
+        "es": "Mostrar proveedor del producto",
+        "fi": "Näytä tuotteen myyjä",
+        "fr": "Afficher le distributeur du produit",
+        "hi": "उत्पाद विक्रेता दिखाएं",
+        "it": "Indica fornitore prodotto",
+        "ja": "商品の販売元を表示する",
+        "ko": "제품 공급 업체 표시",
+        "ms": "Tunjukkan vendor produk",
+        "nb": "Vis produktleverandør",
+        "nl": "Productleverancier weergeven",
+        "pt-BR": "Exiba o fornecedor do produto",
+        "pt-PT": "Mostrar fornecedor do produto",
+        "sv": "Visa produktleverantör",
+        "th": "แสดงผู้ขายสินค้า",
+        "zh-CN": "显示产品厂商",
+        "zh-TW": "顯示產品廠商"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_variant_images",
+      "label": {
+        "da": "Skjul variantbilleder i galleriet",
+        "de": "Variantenbilder in der Galerie ausblenden",
+        "en": "Hide variant images in gallery",
+        "es": "Ocultar imágenes de variantes en galería",
+        "fi": "Piilota versioiden kuvat galleriassa",
+        "fr": "Masquer les variantes d'images dans la galerie",
+        "hi": "गैलरी में वेरिएंट इमेज को छिपाएं",
+        "it": "Nascondi immagini varianti in galleria",
+        "ja": "ギャラリーのバリエーション画像を非表示にする",
+        "ko": "갤러리의 이셩 상품 이미지 숨기기",
+        "ms": "Sembunyikan imej varian dalam galeri",
+        "nb": "Skjul variantbilder i galleriet",
+        "nl": "Variantafbeeldingen verbergen in galerie",
+        "pt-BR": "Ocultar imagens de variantes na galeria",
+        "pt-PT": "Ocultar imagens de variantes na galeria",
+        "sv": "Dölj variantbilder i galleriet",
+        "th": "ซ่อนรูปภาพตัวเลือกสินค้าในแกลเลอรี่",
+        "zh-CN": "在图库中隐藏多属性图片",
+        "zh-TW": "在圖庫中隱藏子類選項圖片"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_payment_button",
+      "label": {
+        "da": "Vis dynamisk betalingsknap",
+        "de": "Dynamischen Checkout Button anzeigen",
+        "en": "Show dynamic checkout button",
+        "es": "Mostrar botón de pago dinámico",
+        "fi": "Näytä dynaaminen kassapainike",
+        "fr": "Afficher le bouton de passage à la caisse dynamique",
+        "hi": "डायनेमिक चेकआउट बटन दिखाएं",
+        "it": "Mostra pulsante di check-out dinamico",
+        "ja": "ダイナミックチェックアウトボタンを表示する",
+        "ko": "동적 결제 버튼 표시",
+        "ms": "Tunjukkan butang daftar keluar dinamik",
+        "nb": "Vis dynamisk knapp for å gå til kassen",
+        "nl": "Dynamische checkout knop weergeven",
+        "pt-BR": "Exibir botão dinâmico de finalização da compra",
+        "pt-PT": "Mostrar botão dinâmico de finalização da compra",
+        "sv": "Visa dynamiska betalningsknappar",
+        "th": "แสดงปุ่มชำระเงินแบบไดนามิก",
+        "zh-CN": "显示动态结账按钮",
+        "zh-TW": "顯示動態結帳按鈕"
+      },
+      "info": {
+        "da": "Den enkelte kunde vil se sin foretrukne betalingsmetode blandt dem, der er tilgængelige i din butik, f.eks. PayPal eller Apple Pay. [Få mere at vide](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "de": "Jeder Kunde sieht seine bevorzugte Zahlungsmethode aus den in Ihrem Shop verfügbaren Zahlungsmethoden wie PayPal oder Apple Pay. [Mehr Infos](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "en": "Each customer will see their preferred payment method from those available on your store, such as PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "es": "Cada cliente verá su forma de pago preferida entre las disponibles en tu tienda, como PayPal o Apple Pay. [Más información](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "fi": "Kukin asiakas näkee ensisijaisen valintansa kauppasi tarjoamista maksutavoista, esim. PayPal tai Apple Pay. [Lisätietoja](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "fr": "Chaque client verra son moyen de paiement préféré parmi ceux qui sont proposés sur votre boutique, tels que PayPal ou Apple Pay. [En savoir plus](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "hi": "प्रत्येक ग्राहक आपके स्टोर पर उपलब्ध अपनी पसंदीदा भुगतान की विधि देखेंगे जैसे PayPal या Apple Pay. [अधिक जानें](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "it": "Ogni cliente vedrà il suo metodo di pagamento preferito tra quelli disponibili nel tuo negozio, come PayPal o Apple Pay. [Maggiori informazioni](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "ja": "PayPalやApple Payなど、ストアで利用可能な希望の決済方法がお客様に表示されます。[もっと詳しく](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "ko": "각 고객은 PayPal 또는 Apple Pay와 같이 스토어에서 사용 가능한 지불 방법을 확인할 수 있습니다. [자세히 알아보기](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "ms": "Setiap pelanggan akan melihat kaedah pembayaran keutamaan mereka dari yang tersedia di kedai anda, seperti PayPal atau Apple Pay. [Ketahui lebih lanjut](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "nb": "Hver enkelt kunde vil se sin foretrukne betalingsmåte blant de som er tilgjengelig i butikken din, som PayPal eller Apple Pay. [Finn ut mer](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "nl": "Elke klant ziet zijn of haar beschikbare voorkeursmethode om af te rekenen, zoals PayPal of Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "pt-BR": "Cada cliente verá sua forma de pagamento preferida dentre as disponíveis na loja, como PayPal ou Apple Pay. [Saiba mais](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "pt-PT": "Cada cliente irá ver o seu método de pagamento preferido entre os disponíveis na loja, como o PayPal ou Apple Pay. [Saiba mais](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "sv": "Varje kund kommer att se den föredragna betalningsmetoden från de som finns tillgängliga i din butik, till exempel PayPal eller Apple Pay. [Läs mer](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "th": "ลูกค้าแต่ละรายจะเห็นวิธีการชำระเงินที่ต้องการจากวิธีที่ใช้ได้ในร้านค้าของคุณ เช่น PayPal หรือ Apple Pay [ดูข้อมูลเพิ่มเติม](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "zh-CN": "每位客户都可在您商店提供的付款方式中看到他们的首选付款方式，例如 PayPal 或 Apple Pay。[了解详细信息](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "zh-TW": "每位客戶都可以在您商店內開放使用的付款方式中看見他們偏好使用的方式，如 PayPal、Apple Pay 等。[深入瞭解相關資訊](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": {
+        "da": "Vis knapper til deling på sociale medier",
+        "de": "Buttons für Social Media anzeigen",
+        "en": "Show social sharing buttons",
+        "es": "Mostrar botones para compartir en redes sociales",
+        "fi": "Näytä sosiaalisen median jakamispainikkeet",
+        "fr": "Afficher les boutons de partage sur les médias sociaux",
+        "hi": "सोशल शेयरिंग बटन दिखाएं",
+        "it": "Mostra i pulsanti per la condivisione sui social",
+        "ja": "ソーシャル共有ボタンを表示する",
+        "ko": "소셜 공유 버튼 표시",
+        "ms": "Tunjukkan butang perkongsian sosial",
+        "nb": "Vis knapper for deling på sosiale medier",
+        "nl": "Knoppen voor delen via social media weergeven",
+        "pt-BR": "Exibir botões de compartilhamento em redes sociais",
+        "pt-PT": "Mostrar botões de partilha nas redes sociais",
+        "sv": "Visa knappar för delning i sociala medier",
+        "th": "แสดงปุ่มสำหรับแชร์ลงโซเชียล",
+        "zh-CN": "显示社交分享按钮",
+        "zh-TW": "顯示社群分享按鈕"
+      },
+      "info": {
+        "da": "Sørg for, at du har aktiveret deling på sociale medier under Generelle indstillinger",
+        "de": "Vergewissern Sie sich, dass Sie in den allgemeinen Einstellungen das Teilen in sozialen Netzwerken aktiviert haben",
+        "en": "Make sure you have enabled social sharing in general settings",
+        "es": "Asegúrate de haber habilitado la opción para compartir en redes sociales en la configuración general.",
+        "fi": "Varmista, että olet ottanut sosiaalisen median jakamisen käyttöön yleisissä asetuksissa",
+        "fr": "Assurez-vous d'avoir activé le partage social dans les paramètres généraux",
+        "hi": "सुनिश्चित करें कि आपने सामान्य सेटिंग में सोशल शेयरिंग सक्षम किया है",
+        "it": "Assicurati di aver abilitato la condivisione sui social nelle impostazioni generali",
+        "ja": "一般設定でソーシャル共有を有効にしていることを確認してください。",
+        "ko": "일반 설정에서 소셜 공유가 되었는지 확인하십시오.",
+        "ms": "Pastikan anda telah mendayakan perkongsian sosial dalam tetapan umum",
+        "nb": "Sørg for at du har aktivert sosial deling i generelle innstillinger",
+        "nl": "Zorg ervoor dat je delen via social media hebt ingeschakeld in de algemene instellingen",
+        "pt-BR": "Verifique se você habilitou o compartilhamento em redes sociais nas configurações gerais",
+        "pt-PT": "Certifique-se de que ativou a partilha nas redes sociais nas definições gerais",
+        "sv": "Se till att du har aktiverat social delning i allmänna inställningar",
+        "th": "ตรวจสอบให้แน่ใจว่าคุณได้เปิดใช้งานการแชร์บนโซเชียลในการตั้งค่าทั่วไป",
+        "zh-CN": "确保您在“通用”设置中启用了社交分享",
+        "zh-TW": "請確定您已在一般設定內啟用社群分享功能"
+      },
+      "default": true
+    }
+  ]
+}
+{% endschema %}
+

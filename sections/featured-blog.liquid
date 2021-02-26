@@ -1,0 +1,508 @@
+<div class="featured-blog featured-blog--{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="featured-blog">
+
+  <div class="page-width">
+    {% if section.settings.title != blank %}
+      <h2 class="featured-blog__heading section-header__title text-center" data-animate>{{ section.settings.title | escape }}</h2>
+    {% endif %}
+
+    {%- assign blog = blogs[section.settings.blog] -%}
+    {%- assign mobileColumns = 1 -%}
+
+    {% unless blog.articles.size == 1 %}
+      {% case section.settings.post_limit %}
+        {% when 3 %}
+          {%- assign desktopColumns = 3 -%}
+          {%- assign width = 'medium-up--one-third' -%}
+        {% when 2 %}
+          {%- assign desktopColumns = 2 -%}
+          {%- assign width = 'medium-up--one-half' -%}
+        {% when 1 %}
+          {%- assign desktopColumns = 1 -%}
+          {%- assign width = 'one-whole' -%}
+        {% else %}
+          {%- assign desktopColumns = 3 -%}
+          {%- assign width = 'medium-up--one-third' -%}
+      {% endcase %}
+    {% endunless %}
+
+    {% capture emptyBlog %}
+      <div class="card-list grid" data-desktop-columns="{{ desktopColumns }}" data-mobile-columns="{{ mobileColumns }}">
+        <div class="card-list__column grid__item {{ width }}{% if mobileColumns == 2 %} small--one-half{% endif %}">
+          {% for i in (1..section.settings.post_limit)  %}
+            <div class="card critical-clear" data-animate>
+              <a class="card__wrapper card--article">
+                {% if section.settings.blog_show_image %}
+                  {% if section.settings.post_limit == 1 %}
+                    <div class="medium-up--one-half card-list__column--half-left">
+                  {% endif %}
+                  <div class="card__image-wrapper">
+                    {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                    {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                  {% if section.settings.post_limit == 1 %}
+                    </div>
+                  {% endif %}
+                  {% if blog.articles.size == 1 or section.settings.post_limit == 1 %}
+                    <div class="medium-up--one-half card-list__column--half-right">
+                  {% endif %}
+                {% endif %}
+                <div class="card__info">
+                  <h2 class="card__name h4">{{ 'homepage.onboarding.blog_title' | t }}</h2>
+                  {% if section.settings.blog_show_excerpt %}
+                    <div class="card__excerpt rte">
+                      {{ 'homepage.onboarding.blog_excerpt' | t }}
+                    </div>
+                  {% endif %}
+                  <span class="card__read-more">
+                    {{ 'blogs.article.read_more' | t }}
+                    {% include 'icon-arrow-right' %}
+                  </span>
+                </div>
+                {% if section.settings.blog_show_image %}
+                  {% if blog.articles.size == 1 or section.settings.post_limit == 1 %}
+                    </div>
+                  {% endif %}
+                {% endif %}
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endcapture %}
+
+    {% unless blog.articles_count == 0 %}
+      <div class="card-list grid" data-desktop-columns="{{ desktopColumns }}" data-mobile-columns="{{ mobileColumns }}" data-grid-style="{{ section.settings.grid_style }}">
+        <div class="card-list__column grid__item {{ width }}{% if mobileColumns == 2 %} small--one-half{% endif %}">
+          {% for article in blog.articles limit: section.settings.post_limit %}
+            {% include 'featured-article-card', article: article, grid_style: section.settings.grid_style %}
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      {{ emptyBlog }}
+    {% endunless %}
+
+    {% if blog == empty %}
+      {{ emptyBlog }}
+    {% endif %}
+
+    {% if section.settings.show_view_all %}
+      <div class="featured-blog__view-all">
+        <a href="{{ blog.url }}" class="btn{% if section.settings.use_second_button %} btn--secondary{% endif %}">
+          {{ 'collections.general.view_all' | t }}
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": {
+    "da": "Blogopslag",
+    "de": "Blogposts",
+    "en": "Blog posts",
+    "es": "Entradas del blog",
+    "fi": "Blogijulkaisut",
+    "fr": "Articles de blog",
+    "hi": "ब्लॉग पोस्ट",
+    "it": "Articoli del blog",
+    "ja": "ブログ記事",
+    "ko": "블로그 게시물",
+    "ms": "Siaran blog",
+    "nb": "Blogginnlegg",
+    "nl": "Blogberichten",
+    "pt-BR": "Posts do blog",
+    "pt-PT": "Publicações no blogue",
+    "sv": "Blogginlägg",
+    "th": "โพสต์บล็อก",
+    "zh-CN": "博客文章",
+    "zh-TW": "部落格文章"
+  },
+  "class": "index-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": {
+        "da": "Overskrift",
+        "de": "Titel",
+        "en": "Heading",
+        "es": "Título",
+        "fi": "Otsake",
+        "fr": "Titre",
+        "hi": "शीर्षक",
+        "it": "Heading",
+        "ja": "見出し",
+        "ko": "제목",
+        "ms": "Tajuk",
+        "nb": "Overskrift",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "pt-PT": "Título",
+        "sv": "Rubrik",
+        "th": "ส่วนหัว",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "da": "Blog",
+        "de": "Blog",
+        "en": "Blog",
+        "es": "Blog",
+        "fi": "Blogi",
+        "fr": "Blog",
+        "hi": "ब्लॉग",
+        "it": "Blog",
+        "ja": "ブログ",
+        "ko": "블로그",
+        "ms": "Blog",
+        "nb": "Blogg",
+        "nl": "Blog",
+        "pt-BR": "Blog",
+        "pt-PT": "Blogue",
+        "sv": "Blogg",
+        "th": "บล็อก",
+        "zh-CN": "博客",
+        "zh-TW": "部落格"
+      }
+    },
+    {
+      "id": "blog",
+      "type": "blog",
+      "label": {
+        "da": "Blog",
+        "de": "Blog",
+        "en": "Blog",
+        "es": "Blog",
+        "fi": "Blogi",
+        "fr": "Blog",
+        "hi": "ब्लॉग",
+        "it": "Blog",
+        "ja": "ブログ",
+        "ko": "블로그",
+        "ms": "Blog",
+        "nb": "Blogg",
+        "nl": "Blog",
+        "pt-BR": "Blog",
+        "pt-PT": "Blogue",
+        "sv": "Blogg",
+        "th": "บล็อก",
+        "zh-CN": "博客",
+        "zh-TW": "部落格"
+      }
+    },
+    {
+      "type": "range",
+      "id": "post_limit",
+      "label": {
+        "da": "Opslag",
+        "de": "Posts",
+        "en": "Posts",
+        "es": "Publicaciones",
+        "fi": "Julkaisut",
+        "fr": "Articles",
+        "hi": "पोस्ट",
+        "it": "Articoli",
+        "ja": "投稿",
+        "ko": "게시물",
+        "ms": "Siaran",
+        "nb": "Innlegg",
+        "nl": "Berichten",
+        "pt-BR": "posts",
+        "pt-PT": "Publicações",
+        "sv": "Inlägg",
+        "th": "โพสต์",
+        "zh-CN": "文章",
+        "zh-TW": "貼文"
+      },
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "grid_style",
+      "label": {
+        "da": "Gittertypografi",
+        "de": "Rasterstil",
+        "en": "Grid style",
+        "es": "Estilo de cuadrícula",
+        "fi": "Ruudukon tyyli",
+        "fr": "Style de grille",
+        "hi": "ग्रिड स्टाइल",
+        "it": "Stile griglia",
+        "ja": "グリッドスタイル",
+        "ko": "그리드 스타일",
+        "ms": "Gaya grid",
+        "nb": "Rutenettstil",
+        "nl": "Rasterstijl",
+        "pt-BR": "Estilo da grade",
+        "pt-PT": "Estilo de grelha",
+        "sv": "Rutnätsstil",
+        "th": "รูปแบบกริด",
+        "zh-CN": "网格样式",
+        "zh-TW": "網格樣式"
+      },
+      "default": "collage",
+      "options": [
+        {
+          "value": "collage",
+          "label": {
+            "da": "Collage",
+            "de": "Collage",
+            "en": "Collage",
+            "es": "Collage",
+            "fi": "Kollaasi",
+            "fr": "Collage",
+            "hi": "कोल्लाज",
+            "it": "Collage",
+            "ja": "コラージュ",
+            "ko": "콜라주",
+            "ms": "Kolaj",
+            "nb": "Fotomontasje",
+            "nl": "Collage",
+            "pt-BR": "Colagem",
+            "pt-PT": "Colagem",
+            "sv": "Kollage",
+            "th": "ภาพตัดแปะ",
+            "zh-CN": "拼贴画",
+            "zh-TW": "拼貼"
+          }
+        },
+        {
+          "value": "grid",
+          "label": {
+            "da": "Gitter",
+            "de": "Raster",
+            "en": "Grid",
+            "es": "Cuadrícula",
+            "fi": "Ruudukko",
+            "fr": "Grille",
+            "hi": "ग्रिड",
+            "it": "Griglia",
+            "ja": "グリッド",
+            "ko": "그리드",
+            "ms": "Grid",
+            "nb": "Rutenett",
+            "nl": "Raster",
+            "pt-BR": "Grade",
+            "pt-PT": "Grelha",
+            "sv": "Rutnät",
+            "th": "กริด",
+            "zh-CN": "网格",
+            "zh-TW": "網格"
+          }
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_show_date",
+      "label": {
+        "da": "Vis dato",
+        "de": "Datum anzeigen",
+        "en": "Show date",
+        "es": "Mostrar fecha",
+        "fi": "Näytä päivämäärä",
+        "fr": "Afficher la date",
+        "hi": "दिनांक दिखाएं",
+        "it": "Mostra data",
+        "ja": "日付を表示する",
+        "ko": "날짜 표시",
+        "ms": "Tunjukkan tarikh",
+        "nb": "Vis dato",
+        "nl": "Datum weergeven",
+        "pt-BR": "Exibir data",
+        "pt-PT": "Mostrar data",
+        "sv": "Visa datum",
+        "th": "แสดงวันที่",
+        "zh-CN": "显示日期",
+        "zh-TW": "顯示日期"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_show_author",
+      "label": {
+        "da": "Vis forfatter",
+        "de": "Autor anzeigen",
+        "en": "Show author",
+        "es": "Mostrar autor",
+        "fi": "Näytä tekijä",
+        "fr": "Afficher l'auteur",
+        "hi": "लेखक दिखाएं",
+        "it": "Mostra autore",
+        "ja": "執筆者を表示する",
+        "ko": "작성자 표시",
+        "ms": "Tunjukkan pengarang",
+        "nb": "Vis forfatter",
+        "nl": "Auteur weergeven",
+        "pt-BR": "Exibir autor",
+        "pt-PT": "Mostrar autor",
+        "sv": "Visa författare",
+        "th": "แสดงผู้เขียน",
+        "zh-CN": "显示作者",
+        "zh-TW": "顯示作者"
+      },
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_show_image",
+      "label": {
+        "da": "Vis coverbillede",
+        "de": "Titelbild anzeigen",
+        "en": "Show cover image",
+        "es": "Mostrar imagen de portada",
+        "fi": "Näytä kansikuva",
+        "fr": "Afficher l'image de couverture",
+        "hi": "कवर इमेज दिखाएं",
+        "it": "Mostra immagine di copertina",
+        "ja": "表紙画像を表示する",
+        "ko": "커버 이미지 표시",
+        "ms": "Tunjukkan kulit imej",
+        "nb": "Vis forsidebilde",
+        "nl": "Coverafbeelding weergeven",
+        "pt-BR": "Exibir imagem da capa",
+        "pt-PT": "Mostrar imagem da capa",
+        "sv": "Visa omslagsbild",
+        "th": "แสดงรูปภาพหน้าปก",
+        "zh-CN": "显示封面图片",
+        "zh-TW": "顯示封面圖片"
+      },
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_show_excerpt",
+      "label": {
+        "da": "Vis uddrag",
+        "de": "Auszug anzeigen",
+        "en": "Show excerpt",
+        "es": "Mostrar extracto",
+        "fi": "Näytä ote",
+        "fr": "Afficher l'extrait",
+        "hi": "अंश दिखाएं",
+        "it": "Mostra riassunto",
+        "ja": "抜粋を表示する",
+        "ko": "요약 표시",
+        "ms": "Tunjukkan petikan",
+        "nb": "Vis utdrag",
+        "nl": "Uittreksel weergeven",
+        "pt-BR": "Exibir resumo",
+        "pt-PT": "Mostrar resumo",
+        "sv": "Visa utdrag",
+        "th": "แสดงเนื้อหาบางส่วน",
+        "zh-CN": "显示摘录",
+        "zh-TW": "顯示摘要"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": {
+        "da": "Vis knappen \"Se flere\"",
+        "de": "'Alle anzeigen' Button anzeigen",
+        "en": "Show 'View all' button",
+        "es": "Mostrar el botón 'Ver todo'",
+        "fi": "Näytä \"Näytä kaikki\" -painike",
+        "fr": "Afficher le bouton « Tout afficher »",
+        "hi": "'सभी देखें' बटन दिखाएं",
+        "it": "Mostra il pulsante \"Visualizza tutto\"",
+        "ja": "[すべて表示] ボタンを表示する",
+        "ko": "'모두 보기' 버튼 표시",
+        "ms": "Tunjukkan butang 'Lihat semua'",
+        "nb": "Vis «Se alle»-knapp",
+        "nl": "Knop 'Alles weergeven' weergeven",
+        "pt-BR": "Exibir botão 'Visualizar tudo'",
+        "pt-PT": "Mostrar botão \"Ver tudo\"",
+        "sv": "Visa \"Visa alla\"-knappen",
+        "th": "แสดงปุ่ม 'ดูทั้งหมด'",
+        "zh-CN": "显示“查看全部”按钮",
+        "zh-TW": "顯示「檢視全部」按鈕"
+      },
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "use_second_button",
+      "label": {
+        "da": "Brug sekundær knaptypografi",
+        "de": "Stil für sekundäre Schaltflächen verwenden",
+        "en": "Use secondary button style",
+        "es": "Utiliza el estilo de botón secundario",
+        "fi": "Käytä toissijaista painikkeen tyyliä",
+        "fr": "Utiliser le style de bouton secondaire",
+        "hi": "द्वितीयक बटन स्टाइल का उपयोग करें",
+        "it": "Usa stile pulsante secondario",
+        "ja": "サブボタンのスタイルを使用する",
+        "ko": "보조 버튼 스타일 사용",
+        "ms": "Gunakan gaya butang sekunder",
+        "nb": "Bruk sekundær knappestil",
+        "nl": "Secundaire knopstijl gebruiken",
+        "pt-BR": "Usar o estilo de botão secundário",
+        "pt-PT": "Utilizar estilo de botão secundário",
+        "sv": "Använd sekundärknappsstil",
+        "th": "ใช้รูปแบบปุ่มรอง",
+        "zh-CN": "使用辅助按钮样式",
+        "zh-TW": "使用次要按鈕樣式"
+      },
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "da": "Blogopslag",
+        "de": "Blogposts",
+        "en": "Blog posts",
+        "es": "Entradas del blog",
+        "fi": "Blogijulkaisut",
+        "fr": "Articles de blog",
+        "hi": "ब्लॉग पोस्ट",
+        "it": "Articoli del blog",
+        "ja": "ブログ記事",
+        "ko": "블로그 게시물",
+        "ms": "Siaran blog",
+        "nb": "Blogginnlegg",
+        "nl": "Blogberichten",
+        "pt-BR": "Posts do blog",
+        "pt-PT": "Publicações no blogue",
+        "sv": "Blogginlägg",
+        "th": "โพสต์บล็อก",
+        "zh-CN": "博客文章",
+        "zh-TW": "部落格文章"
+      },
+      "category": {
+        "da": "Blog",
+        "de": "Blog",
+        "en": "Blog",
+        "es": "Blog",
+        "fi": "Blogi",
+        "fr": "Blog",
+        "hi": "ब्लॉग",
+        "it": "Blog",
+        "ja": "ブログ",
+        "ko": "블로그",
+        "ms": "Blog",
+        "nb": "Blogg",
+        "nl": "Blog",
+        "pt-BR": "Blog",
+        "pt-PT": "Blogue",
+        "sv": "Blogg",
+        "th": "บล็อก",
+        "zh-CN": "博客",
+        "zh-TW": "部落格"
+      },
+      "settings": {
+        "blog": "News"
+      }
+    }
+  ]
+}
+{% endschema %}

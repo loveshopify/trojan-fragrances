@@ -1,0 +1,32 @@
+{% comment %}
+  The contents of the product.liquid template can be found in /sections/product-template/
+{% endcomment %}
+
+<style>
+  {% if product.handle == 'fragrances-for-women' %}
+  body, .content-for-layout, .site-footer {
+    background-color: #6c1e22;
+  }
+  {% endif %}
+  
+  {% if product.handle == 'for-all-fragrances' %}
+  body, .content-for-layout, .site-footer {
+    background-color: #3e5786;
+  }
+  {% endif %}
+  
+</style>
+
+{% section 'product-template' %}
+{% section 'product-recommendations' %}
+
+<script>
+  window.theme = window.theme || {};
+  window.theme.strings = window.theme.strings || {};
+
+  // Override default values of theme.strings for each template.
+  // Values are used by JavaScript only; Liquid must be updated separately
+  window.theme.strings.addToCart = {{ 'products.product.add_to_cart' | t | json }};
+  window.theme.strings.soldOut = {{ 'products.product.sold_out' | t | json }};
+  window.theme.strings.unavailable = {{ 'products.product.unavailable' | t | json }};
+</script>

@@ -1,0 +1,42 @@
+<div class="instagram-section-part">
+  {% if section.settings.instagram_client_id != blank %}
+    <div id="dm-instafeed" class="image-bar image-bar--medium" data-section-type="gallery"
+         data-client-id="{{ section.settings.instagram_client_id | strip }}"
+         data-count="{{ section.settings.instagram_count }}" >
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Instagram",
+	"settings": [
+        {
+          "type": "text",
+          "id": "instagram_client_id",
+          "label": "Instagram Access Token ([?](https:\/\/outofthesandbox.com\/pages\/instagram-access-token))"
+        },
+        {
+          "type": "range",
+          "id": "instagram_count",
+          "label": "Number of images",
+          "min": 3,
+          "max": 12,
+          "step": 3,
+          "default": 6
+        }
+      ],
+    "presets": [
+      {
+        "name": "Instagram",
+        "category": "Instagram"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

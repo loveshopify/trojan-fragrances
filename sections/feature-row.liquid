@@ -1,0 +1,1055 @@
+{%- assign image_crop = false -%}
+
+{% if section.settings.image_crop == 'circle' or section.settings.image_crop == 'square' %}
+  {%- assign image_crop = true -%}
+{% endif %}
+
+<style>
+  .feature-row--{{ section.id }} {
+    {% if section.settings.background_color != blank %}
+      background-color: {{ section.settings.background_color }};
+    {% elsif section.settings.background_color == blank and image_crop %}
+      background-color: {{ settings.color_secondary_bg }};
+    {% endif %}
+  }
+
+  {% if image_crop %}
+    @media screen and (min-width: 750px) {
+      .feature-row--{{ section.id }} .feature-row__image-wrapper {
+        background-color: {{ section.settings.background_color | color_lighten: 5 }};
+      }
+    }
+  {% endif %}
+</style>
+
+{% if section.settings.image != blank %}
+  <style>
+    .feature-row__image--{{ section.id }} {
+      background-position: {{ section.settings.alignment }};
+    }
+  </style>
+{% endif %}
+
+{% capture image_layout %}
+  <div class="feature-row__item feature-row__image-wrapper">
+    {% if section.settings.image != blank %}
+      <div class="feature-row__image feature-row__image--{{ section.id }}{% if image_crop %} feature-row__image-crop{% endif %} lazyload" data-sizes="auto" data-bgset="{% include 'bgset', image: section.settings.image %}"></div>
+
+      <noscript>
+        <div class="feature-row__image feature-row__image--{{ section.id }}{% if image_crop %} feature-row__image-crop{% endif %}" style="background-image: {{ section.settings.image | img_url: 'master' }}"></div>
+      </noscript>
+    {% else %}
+      <div class="feature-row__image feature-row__image--{{ section.id }}{% if image_crop %} feature-row__image-crop{% endif %}">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+    {% endif %}
+  </div>
+{% endcapture %}
+
+<div class="feature-row feature-row--{{ section.id }} feature-row--{{ section.settings.size }} feature-row__image-crop--{{ section.settings.image_crop }}{% if section.settings.mobile_layout == 'bottom' %} feature-row-mobile--bottom{% endif %}" data-section-id="{{ section.id }}" data-section-type="feature-row">
+  {% if section.settings.desktop_layout == 'left' %}
+    {{ image_layout }}
+  {% endif %}
+
+  <div class="feature-row__item feature-row__text">
+    {% if section.settings.title != blank %}
+      <h2 class="feature-row__heading h3 separator" data-animate>{{ section.settings.title | escape }}</h2>
+    {% endif %}
+    {% if section.settings.text != blank %}
+      <div class="rte-setting featured-row__subtext">{{ section.settings.text }}</div>
+    {% endif %}
+    {% if section.settings.button_label != blank %}
+      <a href="{{ section.settings.button_link }}" class="btn{% if section.settings.use_second_button %} btn--secondary{% endif %} feature-row__btn">
+        {{ section.settings.button_label }}
+      </a>
+    {% endif %}
+  </div>
+
+  {% if section.settings.desktop_layout == 'right' %}
+    {{ image_layout }}
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": {
+    "da": "Billede med tekst",
+    "de": "Foto mit Text",
+    "en": "Image with text",
+    "es": "Imagen con texto",
+    "fi": "Kuva tekstillä",
+    "fr": "Image avec du texte",
+    "hi": "टेक्स्ट वाली इमेज",
+    "it": "Immagine con testo",
+    "ja": "テキスト付き画像",
+    "ko": "텍스트 포함 이미지",
+    "ms": "Imej dengan teks",
+    "nb": "Bilde med tekst",
+    "nl": "Afbeelding met tekst",
+    "pt-BR": "Imagem com texto",
+    "pt-PT": "Imagem com texto",
+    "sv": "Bild med text",
+    "th": "รูปภาพที่มีข้อความ",
+    "zh-CN": "带文本的图片",
+    "zh-TW": "附文字的圖片"
+  },
+  "class": "index-section index-section--image-with-text",
+  "settings": [
+    {
+      "type": "select",
+      "id": "size",
+      "label": {
+        "da": "Højde på afsnit",
+        "de": "Bereichs-Höhe",
+        "en": "Section height",
+        "es": "Altura de la sección",
+        "fi": "Osan korkeus",
+        "fr": "Hauteur de la section",
+        "hi": "सेक्शन की ऊंचाई",
+        "it": "Altezza sezione",
+        "ja": "セクションの高さ",
+        "ko": "섹션 높이",
+        "ms": "Ketinggian bahagian",
+        "nb": "Høyde på del",
+        "nl": "Sectiehoogte",
+        "pt-BR": "Altura da seção",
+        "pt-PT": "Altura da secção",
+        "sv": "Sektionshöjd",
+        "th": "ความสูงของส่วน",
+        "zh-CN": "分区高度",
+        "zh-TW": "區塊高度"
+      },
+      "default": "medium",
+      "options": [
+        {
+          "label": {
+            "da": "Lille",
+            "de": "Klein",
+            "en": "Small",
+            "es": "Pequeña",
+            "fi": "Pieni",
+            "fr": "Petite",
+            "hi": "छोटा",
+            "it": "Piccolo",
+            "ja": "小",
+            "ko": "스몰",
+            "ms": "Kecil",
+            "nb": "Liten",
+            "nl": "Klein",
+            "pt-BR": "Pequeno",
+            "pt-PT": "Pequeno",
+            "sv": "Liten",
+            "th": "เล็ก",
+            "zh-CN": "小",
+            "zh-TW": "小型"
+          },
+          "value": "small"
+        },
+        {
+          "label": {
+            "da": "Medium",
+            "de": "Mitte",
+            "en": "Medium",
+            "es": "Mediana",
+            "fi": "Keskisuuri",
+            "fr": "Moyenne",
+            "hi": "मध्यम",
+            "it": "Medio",
+            "ja": "中",
+            "ko": "보통",
+            "ms": "Sederhana",
+            "nb": "Middels",
+            "nl": "Gemiddeld",
+            "pt-BR": "Médio",
+            "pt-PT": "Médio",
+            "sv": "Medium",
+            "th": "ปานกลาง",
+            "zh-CN": "中等",
+            "zh-TW": "中等"
+          },
+          "value": "medium"
+        },
+        {
+          "label": {
+            "da": "Stor",
+            "de": "Groß",
+            "en": "Large",
+            "es": "Grande",
+            "fi": "Suuri",
+            "fr": "Grande",
+            "hi": "बड़ा",
+            "it": "Grande",
+            "ja": "大",
+            "ko": "라지",
+            "ms": "Besar",
+            "nb": "Stor",
+            "nl": "Groot",
+            "pt-BR": "Grande",
+            "pt-PT": "Grande",
+            "sv": "Stor",
+            "th": "ใหญ่",
+            "zh-CN": "大",
+            "zh-TW": "大型"
+          },
+          "value": "large"
+        },
+        {
+          "label": {
+            "da": "Ekstra stor",
+            "de": "Extra groß",
+            "en": "Extra Large",
+            "es": "Extra grande",
+            "fi": "Erikoissuuri",
+            "fr": "Très grande",
+            "hi": "अतिरिक्त बड़ा",
+            "it": "Molto grande",
+            "ja": "特大",
+            "ko": "특대",
+            "ms": "Lebih Besar",
+            "nb": "Ekstra stort",
+            "nl": "Extra groot",
+            "pt-BR": "Extragrande",
+            "pt-PT": "Extra grande",
+            "sv": "Extra stor",
+            "th": "ขนาดใหญ่พิเศษ",
+            "zh-CN": "特大",
+            "zh-TW": "超大型"
+          },
+          "value": "x-large"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": {
+        "da": "Baggrundsfarve",
+        "de": "Hintergrundfarbe",
+        "en": "Background color",
+        "es": "Color del fondo",
+        "fi": "Taustaväri",
+        "fr": "Couleur de fond",
+        "hi": "पृष्ठभूमि का रंग",
+        "it": "Colore sfondo",
+        "ja": "背景の色",
+        "ko": "배경색",
+        "ms": "Warna latar belakang",
+        "nb": "Bakgrunnsfarge",
+        "nl": "Achtergrondkleur",
+        "pt-BR": "Cor do fundo",
+        "pt-PT": "Cor do fundo",
+        "sv": "Bakgrundsfärg",
+        "th": "สีพื้นหลัง",
+        "zh-CN": "背景色",
+        "zh-TW": "背景顏色"
+      },
+      "default": "#faf9f6"
+    },
+    {
+      "type": "header",
+      "content": {
+        "da": "Billede",
+        "de": "Foto",
+        "en": "Image",
+        "es": "Imagen",
+        "fi": "Kuva",
+        "fr": "Image",
+        "hi": "इमेज",
+        "it": "Immagine",
+        "ja": "画像",
+        "ko": "이미지",
+        "ms": "Imej",
+        "nb": "Bilde",
+        "nl": "Afbeelding",
+        "pt-BR": "Imagem",
+        "pt-PT": "Imagem",
+        "sv": "Bild",
+        "th": "รูปภาพ",
+        "zh-CN": "图片",
+        "zh-TW": "圖片"
+      }
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": {
+        "da": "Billede",
+        "de": "Foto",
+        "en": "Image",
+        "es": "Imagen",
+        "fi": "Kuva",
+        "fr": "Image",
+        "hi": "इमेज",
+        "it": "Immagine",
+        "ja": "画像",
+        "ko": "이미지",
+        "ms": "Imej",
+        "nb": "Bilde",
+        "nl": "Afbeelding",
+        "pt-BR": "Imagem",
+        "pt-PT": "Imagem",
+        "sv": "Bild",
+        "th": "รูปภาพ",
+        "zh-CN": "图片",
+        "zh-TW": "圖片"
+      }
+    },
+    {
+      "type": "select",
+      "id": "image_crop",
+      "label": {
+        "da": "Billedstil",
+        "de": "Bildstil",
+        "en": "Image style",
+        "es": "Estilo de imagen",
+        "fi": "Kuvan tyyli",
+        "fr": "Style d'image",
+        "hi": "इमेज स्टाइल",
+        "it": "Stile immagine",
+        "ja": "画像スタイル",
+        "ko": "이미지 스타일",
+        "ms": "Gaya imej",
+        "nb": "Bildestil",
+        "nl": "Afbeeldingsstijl",
+        "pt-BR": "Estilo da imagem",
+        "pt-PT": "Estilo da imagem",
+        "sv": "Bildstil",
+        "th": "รูปแบบรูปภาพ",
+        "zh-CN": "图片样式",
+        "zh-TW": "圖片樣式"
+      },
+      "default": "none",
+      "options": [
+        {
+          "label": {
+            "da": "Ingen",
+            "de": "Keine",
+            "en": "None",
+            "es": "Ninguna",
+            "fi": "Ei mitään",
+            "fr": "Aucun",
+            "hi": "कोई नहीं",
+            "it": "Nessuno",
+            "ja": "なし",
+            "ko": "없음",
+            "ms": "Tiada",
+            "nb": "Ingen",
+            "nl": "Geen",
+            "pt-BR": "Nenhum",
+            "pt-PT": "Nenhum",
+            "sv": "Inga",
+            "th": "ไม่มี",
+            "zh-CN": "无",
+            "zh-TW": "無"
+          },
+          "value": "none"
+        },
+        {
+          "label": {
+            "da": "Cirkel",
+            "de": "Kreis",
+            "en": "Circle",
+            "es": "Círculo",
+            "fi": "Ympyrä",
+            "fr": "Cercle",
+            "hi": "सर्कल",
+            "it": "Cerchio",
+            "ja": "丸",
+            "ko": "서클",
+            "ms": "Bulatan",
+            "nb": "Sirkel",
+            "nl": "Cirkel",
+            "pt-BR": "Círculo",
+            "pt-PT": "Círculo",
+            "sv": "Cirkel",
+            "th": "วงกลม",
+            "zh-CN": "圆形",
+            "zh-TW": "圓形"
+          },
+          "value": "circle"
+        },
+        {
+          "label": {
+            "da": "Square",
+            "de": "Square",
+            "en": "Square",
+            "es": "Cuadrada",
+            "fi": "Square",
+            "fr": "Carré",
+            "hi": "वर्ग",
+            "it": "Square",
+            "ja": "正方形",
+            "ko": "Square",
+            "ms": "Square",
+            "nb": "Square",
+            "nl": "Square",
+            "pt-BR": "Square",
+            "pt-PT": "Square",
+            "sv": "Square",
+            "th": "สี่เหลี่ยม",
+            "zh-CN": "Square",
+            "zh-TW": "Square"
+          },
+          "value": "square"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": {
+        "da": "Placering af billede",
+        "de": "Foto-Position",
+        "en": "Image position",
+        "es": "Posición de la imagen",
+        "fi": "Kuvan sijainti",
+        "fr": "Position de l'image",
+        "hi": "इमेज स्थिति",
+        "it": "Posizione Immagine",
+        "ja": "画像の位置",
+        "ko": "이미지 위치",
+        "ms": "Kedudukan imej",
+        "nb": "Bildeposisjon",
+        "nl": "Afbeeldingspositie",
+        "pt-BR": "Posição da imagem",
+        "pt-PT": "Posição da imagem",
+        "sv": "Bildposition",
+        "th": "ตำแหน่งรูปภาพ",
+        "zh-CN": "图片位置",
+        "zh-TW": "圖片位置"
+      },
+      "default": "center center",
+      "options": [
+        {
+          "label": {
+            "da": "Øverst til venstre",
+            "de": "Oben links",
+            "en": "Top left",
+            "es": "Superior izquierda",
+            "fi": "Ylhäällä vasemmalla",
+            "fr": "En haut à gauche",
+            "hi": "शीर्ष पर बाईं ओर",
+            "it": "In alto a sinistra",
+            "ja": "左上",
+            "ko": "왼쪽 상단",
+            "ms": "Kiri atas",
+            "nb": "Øverst til venstre",
+            "nl": "Linksboven",
+            "pt-BR": "Superior esquerdo",
+            "pt-PT": "Canto superior esquerdo",
+            "sv": "Överst till vänster",
+            "th": "ซ้ายบน",
+            "zh-CN": "左上方",
+            "zh-TW": "左上角"
+          },
+          "value": "top left"
+        },
+        {
+          "label": {
+            "da": "Øverst i midten",
+            "de": "Oben Mitte",
+            "en": "Top center",
+            "es": "Superior centrada",
+            "fi": "Keskellä ylhäällä",
+            "fr": "En haut au centre",
+            "hi": "शीर्ष केंद्र",
+            "it": "In alto al centro",
+            "ja": "中央上",
+            "ko": "맨 위 중간",
+            "ms": "Tengah atas",
+            "nb": "Toppsentrert",
+            "nl": "Midden boven",
+            "pt-BR": "Superior centro",
+            "pt-PT": "Superior centro",
+            "sv": "Längst upp i mitten",
+            "th": "กลางบน",
+            "zh-CN": "顶部居中",
+            "zh-TW": "中央上方"
+          },
+          "value": "top center"
+        },
+        {
+          "label": {
+            "da": "Øverst til højre",
+            "de": "Oben rechts",
+            "en": "Top right",
+            "es": "Superior derecha",
+            "fi": "Ylhäällä oikealla",
+            "fr": "En haut à droite",
+            "hi": "शीर्ष पर दाईं ओर",
+            "it": "In alto a destra",
+            "ja": "右上",
+            "ko": "오른쪽 상단",
+            "ms": "Kanan atas",
+            "nb": "Øverst til høyre",
+            "nl": "Rechtsboven",
+            "pt-BR": "Superior direito",
+            "pt-PT": "Canto superior direito",
+            "sv": "Överst till höger",
+            "th": "ขวาบน",
+            "zh-CN": "右上方",
+            "zh-TW": "右上角"
+          },
+          "value": "top right"
+        },
+        {
+          "label": {
+            "da": "Midt på til venstre",
+            "de": "Mitte links",
+            "en": "Middle left",
+            "es": "Al medio a la izquierda",
+            "fi": "Keskellä vasemmalla",
+            "fr": "Au milieu à gauche",
+            "hi": "मध्य में बाईं ओर",
+            "it": "In mezzo a sinistra",
+            "ja": "中央左",
+            "ko": "왼쪽 중간",
+            "ms": "Kiri tengah",
+            "nb": "Midt til venstre",
+            "nl": "Links midden",
+            "pt-BR": "Meio esquerdo",
+            "pt-PT": "Intermédio à esquerda",
+            "sv": "Mitten till vänster",
+            "th": "ซ้ายกลาง",
+            "zh-CN": "中间居左",
+            "zh-TW": "中央左方"
+          },
+          "value": "center left"
+        },
+        {
+          "label": {
+            "da": "Midt på centreret",
+            "de": "Mitte mittig",
+            "en": "Middle center",
+            "es": "Al medio centrada",
+            "fi": "Keskellä keskellä",
+            "fr": "Centrée au milieu",
+            "hi": "मध्य केंद्र",
+            "it": "In mezzo al centro",
+            "ja": "中央中",
+            "ko": "가운데 중간",
+            "ms": "Tengah-tengah",
+            "nb": "Midt i senter",
+            "nl": "Centraal midden",
+            "pt-BR": "Meio centro",
+            "pt-PT": "Intermédio ao centro",
+            "sv": "Mitten centrerat",
+            "th": "กึ่งกลาง",
+            "zh-CN": "中间居中",
+            "zh-TW": "正中央"
+          },
+          "value": "center center"
+        },
+        {
+          "label": {
+            "da": "Midt på til højre",
+            "de": "Mitte rechts",
+            "en": "Middle right",
+            "es": "Al medio a la derecha",
+            "fi": "Keskellä oikealla",
+            "fr": "Au milieu à droite",
+            "hi": "मध्य में दाईं ओर",
+            "it": "In centro a destra",
+            "ja": "中央右",
+            "ko": "오른쪽 중간",
+            "ms": "Kanan tengah",
+            "nb": "Midt til høyre",
+            "nl": "Rechts midden",
+            "pt-BR": "Meio direito",
+            "pt-PT": "Intermédio à direita",
+            "sv": "Mitten till höger",
+            "th": "ขวากลาง",
+            "zh-CN": "中间居右",
+            "zh-TW": "中央右方"
+          },
+          "value": "center right"
+        },
+        {
+          "label": {
+            "da": "Nederst til venstre",
+            "de": "Unten links",
+            "en": "Bottom left",
+            "es": "Inferior izquierda",
+            "fi": "Alhaalla vasemmalla",
+            "fr": "En bas à gauche",
+            "hi": "सबसे नीचे बाईं ओर",
+            "it": "In basso a sinistra",
+            "ja": "左下",
+            "ko": "왼쪽 하단",
+            "ms": "Kiri bawah",
+            "nb": "Nederst til venstre",
+            "nl": "Linksonder",
+            "pt-BR": "Inferior esquerdo",
+            "pt-PT": "Canto inferior esquerdo",
+            "sv": "Nere till vänster",
+            "th": "ซ้ายล่าง",
+            "zh-CN": "左下方",
+            "zh-TW": "左下角"
+          },
+          "value": "bottom left"
+        },
+        {
+          "label": {
+            "da": "Nederst i midten",
+            "de": "Unten mittig",
+            "en": "Bottom center",
+            "es": "Inferior centrada",
+            "fi": "Keskellä alhaalla",
+            "fr": "En bas au centre",
+            "hi": "निचला केंद्र",
+            "it": "In basso al centro",
+            "ja": "中央下",
+            "ko": "맨아래 중간",
+            "ms": "Bawah tengah",
+            "nb": "Bunnsentrert",
+            "nl": "Middenonder",
+            "pt-BR": "Inferior centro",
+            "pt-PT": "Inferior centro",
+            "sv": "Längst ner i mitten",
+            "th": "กลางล่าง",
+            "zh-CN": "底部居中",
+            "zh-TW": "中央下方"
+          },
+          "value": "bottom center"
+        },
+        {
+          "label": {
+            "da": "Nederst til højre",
+            "de": "Unten rechts",
+            "en": "Bottom right",
+            "es": "Inferior derecha",
+            "fi": "Alhaalla oikealla",
+            "fr": "En bas à droite",
+            "hi": "सबसे नीचे दाईं ओर",
+            "it": "In basso a destra",
+            "ja": "右下",
+            "ko": "오른쪽 아래",
+            "ms": "Bawah kanan",
+            "nb": "Nederst til høyre",
+            "nl": "Rechtsonder",
+            "pt-BR": "Inferior direito",
+            "pt-PT": "Canto inferior direito",
+            "sv": "Nere till höger",
+            "th": "ขวาล่าง",
+            "zh-CN": "右下方",
+            "zh-TW": "右下角"
+          },
+          "value": "bottom right"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": {
+        "da": "Tekst",
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fi": "Teksti",
+        "fr": "Texte",
+        "hi": "टेक्स्ट",
+        "it": "Testo",
+        "ja": "テキスト",
+        "ko": "텍스트",
+        "ms": "Teks",
+        "nb": "Tekst",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "pt-PT": "Texto",
+        "sv": "Text",
+        "th": "ข้อความ",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      }
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": {
+        "da": "Overskrift",
+        "de": "Titel",
+        "en": "Heading",
+        "es": "Título",
+        "fi": "Otsake",
+        "fr": "Titre",
+        "hi": "शीर्षक",
+        "it": "Heading",
+        "ja": "見出し",
+        "ko": "제목",
+        "ms": "Tajuk",
+        "nb": "Overskrift",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "pt-PT": "Título",
+        "sv": "Rubrik",
+        "th": "ส่วนหัว",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "da": "Billede med tekst",
+        "de": "Bild mit Text",
+        "en": "Image with text",
+        "es": "Imagen con texto",
+        "fi": "Kuva tekstillä",
+        "fr": "Image avec texte",
+        "hi": "टेक्स्ट वाली इमेज",
+        "it": "Immagine con testo",
+        "ja": "テキスト付き画像",
+        "ko": "텍스트 포함 이미지",
+        "ms": "Imej dengan teks",
+        "nb": "Bilde med tekst",
+        "nl": "Afbeelding met tekst",
+        "pt-BR": "Imagem com texto",
+        "pt-PT": "Imagem com texto",
+        "sv": "Bild med text",
+        "th": "รูปภาพที่มีข้อความ",
+        "zh-CN": "带文本的图片",
+        "zh-TW": "附文字的圖片"
+      }
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": {
+        "da": "Tekst",
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fi": "Teksti",
+        "fr": "Texte",
+        "hi": "टेक्स्ट",
+        "it": "Testo",
+        "ja": "テキスト",
+        "ko": "텍스트",
+        "ms": "Teks",
+        "nb": "Tekst",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "pt-PT": "Texto",
+        "sv": "Text",
+        "th": "ข้อความ",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      },
+      "default": {
+        "da": "<p>Kombiner stor tekst med et billede for at give dit valgte produkt, din valgte kollektion eller dit valgte blogopslag fokus. Tilføj oplysninger om tilgængelighed, stil og eventuelt også en anmeldelse.</p>",
+        "de": "<p>Kombinieren Sie große Schrift mit einem Foto, um einen Fokus auf Ihr ausgewähltes Produkt, die Kategorie oder einen Blogpost zu legen. Dazu Details zur Verfügbarkeit, Stil oder ein Review.</p>",
+        "en": "<p>Pair large text with an image to give focus to your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+        "es": "<p>Vincula un texto largo con una imagen para dar visibilidad a tu producto, colección o artículo de blog seleccionados. Agrega detalles sobre disponibilidad, estilo, o incluso ofrece una reseña.</p>",
+        "fi": "<p>Korosta valitsemaasi tuotetta, kokoelmaa tai blogijulkaisua lisäämällä kuvaan suuri teksti. Lisää saatavuustiedot, määritä tyyli tai näytä vaikkapa arvostelu.</p>",
+        "fr": "<p>Ajoutez une image à un long texte pour mettre l'accent sur un produit de votre choix, une collection, ou un article de blog. Ajoutez des détails sur la disponibilité, le style, ou mettez un commentaire client en avant.</p>",
+        "hi": "<p>अपने चुने हुए उत्पाद, कलेक्शन या ब्लॉग पोस्ट पर ध्यान देने के लिए छवि के साथ बड़े पाठ को पेयर करें. उपलब्धता, स्टाइल या यहां तक कि समीक्षा प्रदान करने पर विवरण जोड़ें.</p>",
+        "it": "<p>Associa un testo di grandi dimensioni a un'immagine per dare importanza al prodotto, alla collezione o all'articolo del blog di tua scelta. Aggiungi dettagli sulla disponibilità, sullo stile o fornisci una recensione.</p>",
+        "ja": "<p>あなたが選んだ商品、コレクション、またはブログ記事に注目を集めるため、大きなテキストと画像を組み合わせます。在庫状況、スタイル、またはレビュー提供についての詳細を追加します。</p>",
+        "ko": "<p>이미지와 큰 텍스트를 짝지어 선택한 제품, 컬렉션, 블로그 게시판을 강조합니다. 사용 가능성, 스타일에 대한 자세한 정보를 추가하거나 리뷰를 제공합니다.</p>",
+        "ms": "<p>Pasangkan teks besar dengan imej untuk memberikan tumpuan kepada produk, koleksi atau siaran blog pilihan anda. Tambah butiran tentang ketersediaan, gaya atau juga memberikan ulasan.</p>",
+        "nb": "<p>Koble stor tekst med et bilde for å drive fokus mot det valgte produktet, samlingen eller blogginnlegget. Legg til detaljer om tilgjengelighet, stil eller vis frem en vurdering.</p>",
+        "nl": "<p>Plaats een afbeelding bij grote stukken tekst om de aandacht op je gekozen product, collectie of blogpost te richten. Voeg details over beschikbaarheid en stijl toe of plaats een productrecensie.</p>",
+        "pt-BR": "<p>Emparelhe textos grandes com uma imagem para destacar o produto, a coleção ou o post do blog escolhido. Adicione informações sobre disponibilidade, estilo ou até mesmo uma avaliação.</p>",
+        "pt-PT": "<p>Associe um texto grande a uma imagem para dar ênfase ao produto, coleção ou publicação no blogue que escolheu. Adicione detalhes sobre disponibilidade, estilo ou uma avaliação.</p>",
+        "sv": "<p>Para ihop stor text med en bild för att ge fokus åt din valda produkt, kollektion eller blogginlägg. Lägg till information om tillgänglighet, stil eller tillhandahåll till och med en recension.</p>",
+        "th": "<p>จับคู่ข้อความขนาดใหญ่กับรูปภาพเพื่อให้ความสำคัญกับสินค้า คอลเลกชัน หรือโพสต์บล็อกที่คุณเลือก เพิ่มรายละเอียดเกี่ยวกับความพร้อม สไตล์ หรือแม้กระทั่งเขียนรีวิว</p>",
+        "zh-CN": "<p>将大文本与图片配对，以便将焦点置于您选择的产品、产品系列或博客文章。添加有关可用性和样式的详细信息，甚至是提供评论。</p>",
+        "zh-TW": "<p>大型文字搭配圖片，以便強調特定產品、商品系列或部落格貼文。您可以加上各種有關可用性、樣式的資料，甚至可以提供使用心得。</p>"
+      }
+    },
+    {
+      "type": "checkbox",
+      "id": "use_second_button",
+      "label": {
+        "da": "Brug sekundær knaptypografi",
+        "de": "Stil für sekundäre Schaltflächen verwenden",
+        "en": "Use secondary button style",
+        "es": "Utiliza el estilo de botón secundario",
+        "fi": "Käytä toissijaista painikkeen tyyliä",
+        "fr": "Utiliser le style de bouton secondaire",
+        "hi": "द्वितीयक बटन स्टाइल का उपयोग करें",
+        "it": "Usa stile pulsante secondario",
+        "ja": "サブボタンのスタイルを使用する",
+        "ko": "보조 버튼 스타일 사용",
+        "ms": "Gunakan gaya butang sekunder",
+        "nb": "Bruk sekundær knappestil",
+        "nl": "Secundaire knopstijl gebruiken",
+        "pt-BR": "Usar o estilo de botão secundário",
+        "pt-PT": "Utilizar estilo de botão secundário",
+        "sv": "Använd sekundärknappsstil",
+        "th": "ใช้รูปแบบปุ่มรอง",
+        "zh-CN": "使用辅助按钮样式",
+        "zh-TW": "使用次要按鈕樣式"
+      },
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": {
+        "da": "Knapetiket",
+        "de": "Button-Etikett",
+        "en": "Button label",
+        "es": "Etiqueta de botón",
+        "fi": "Painikkeen merkintä",
+        "fr": "Texte du bouton",
+        "hi": "बटन लेबल",
+        "it": "Etichetta pulsante",
+        "ja": "ボタンラベル",
+        "ko": "버튼 레이블",
+        "ms": "Label butang",
+        "nb": "Knappetikett",
+        "nl": "Knoplabel",
+        "pt-BR": "Etiqueta do botão",
+        "pt-PT": "Etiqueta do botão",
+        "sv": "Knappetikett",
+        "th": "ป้ายกำกับปุ่ม",
+        "zh-CN": "按钮标签",
+        "zh-TW": "按鈕標籤"
+      }
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": {
+        "da": "Knaplink",
+        "de": "Button-Etikett",
+        "en": "Button link",
+        "es": "Enlace de botón",
+        "fi": "Painikkeen linkki",
+        "fr": "Lien du bouton",
+        "hi": "बटन लिंक",
+        "it": "Link pulsante",
+        "ja": "ボタンリンク",
+        "ko": "버튼 링크",
+        "ms": "Pautan butang",
+        "nb": "Kobling for knapp",
+        "nl": "Knoplink",
+        "pt-BR": "Link do botão",
+        "pt-PT": "Ligação do botão",
+        "sv": "Knapplänk",
+        "th": "ลิงก์ของปุ่ม",
+        "zh-CN": "按钮链接",
+        "zh-TW": "按鈕連結"
+      }
+    },
+    {
+      "type": "header",
+      "content": {
+        "da": "Justering af billede",
+        "de": "Fotoausrichtung",
+        "en": "Image alignment",
+        "es": "Alineación de imagen",
+        "fi": "Kuvan tasaus",
+        "fr": "Alignement de l'image",
+        "hi": "इमेज पंक्तिबद्ध करना",
+        "it": "Allineamento immagine",
+        "ja": "画像アラインメント",
+        "ko": "이미지 정렬",
+        "ms": "Penjajaran imej",
+        "nb": "Bildejustering",
+        "nl": "Afbeelding uitlijnen",
+        "pt-BR": "Alinhamento da imagem",
+        "pt-PT": "Alinhamento da imagem",
+        "sv": "Bildjustering",
+        "th": "การจัดวางรูปภาพ",
+        "zh-CN": "图片对齐方式",
+        "zh-TW": "圖片對齊"
+      }
+    },
+    {
+      "type": "select",
+      "id": "desktop_layout",
+      "label": {
+        "da": "Desktop",
+        "de": "Desktop",
+        "en": "Desktop",
+        "es": "Escritorio",
+        "fi": "Pöytäkone",
+        "fr": "Bureau",
+        "hi": "डेस्कटॉप",
+        "it": "Desktop",
+        "ja": "デスクトップ",
+        "ko": "데스크톱",
+        "ms": "Komputer meja",
+        "nb": "Datamaskin",
+        "nl": "Bureaublad",
+        "pt-BR": "Desktop",
+        "pt-PT": "Desktop",
+        "sv": "Desktop",
+        "th": "เดสก์ท็อป",
+        "zh-CN": "桌面",
+        "zh-TW": "桌上版"
+      },
+      "default": "right",
+      "options": [
+        {
+          "label": {
+            "da": "Venstre",
+            "de": "Links",
+            "en": "Left",
+            "es": "Izquierda",
+            "fi": "Vasen",
+            "fr": "Gauche",
+            "hi": "बाएँ",
+            "it": "Sinistra",
+            "ja": "左",
+            "ko": "왼쪽",
+            "ms": "Kiri",
+            "nb": "Venstre",
+            "nl": "Links",
+            "pt-BR": "Esquerda",
+            "pt-PT": "Esquerda",
+            "sv": "Vänster",
+            "th": "ด้านซ้าย",
+            "zh-CN": "左侧",
+            "zh-TW": "左方"
+          },
+          "value": "left"
+        },
+        {
+          "label": {
+            "da": "Højre",
+            "de": "Rechts",
+            "en": "Right",
+            "es": "Derecha",
+            "fi": "Oikea",
+            "fr": "Droite",
+            "hi": "दाएँ",
+            "it": "Destra",
+            "ja": "右",
+            "ko": "오른쪽",
+            "ms": "Kanan",
+            "nb": "Høyre",
+            "nl": "Rechts",
+            "pt-BR": "Direita",
+            "pt-PT": "Direita",
+            "sv": "Höger",
+            "th": "ด้านขวา",
+            "zh-CN": "右侧",
+            "zh-TW": "右方"
+          },
+          "value": "right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": {
+        "da": "Mobil",
+        "de": "Mobile",
+        "en": "Mobile",
+        "es": "Móvil",
+        "fi": "Mobiili",
+        "fr": "Mobile",
+        "hi": "मोबाइल",
+        "it": "Mobile",
+        "ja": "モバイル",
+        "ko": "모바일",
+        "ms": "Mudah alih",
+        "nb": "Mobil",
+        "nl": "Mobiel",
+        "pt-BR": "Móvel",
+        "pt-PT": "Móvel",
+        "sv": "Mobil",
+        "th": "มือถือ",
+        "zh-CN": "移动版",
+        "zh-TW": "行動版"
+      },
+      "default": "top",
+      "options": [
+        {
+          "label": {
+            "da": "Top",
+            "de": "Oben",
+            "en": "Top",
+            "es": "Superior",
+            "fi": "Ylös",
+            "fr": "En haut",
+            "hi": "सबसे ऊपर",
+            "it": "In alto",
+            "ja": "上",
+            "ko": "위쪽",
+            "ms": "Atas",
+            "nb": "Topp",
+            "nl": "Boven",
+            "pt-BR": "Acima",
+            "pt-PT": "Acima",
+            "sv": "Högst upp",
+            "th": "ด้านบน",
+            "zh-CN": "顶部",
+            "zh-TW": "頂部"
+          },
+          "value": "top"
+        },
+        {
+          "label": {
+            "da": "Bund",
+            "de": "Unten",
+            "en": "Bottom",
+            "es": "Inferior",
+            "fi": "Alas",
+            "fr": "En bas",
+            "hi": "नीचे का",
+            "it": "In basso",
+            "ja": "下",
+            "ko": "아래쪽",
+            "ms": "Bawah",
+            "nb": "Bunn",
+            "nl": "Onder",
+            "pt-BR": "Abaixo",
+            "pt-PT": "Abaixo",
+            "sv": "Längst ner",
+            "th": "ด้านล่าง",
+            "zh-CN": "底部",
+            "zh-TW": "底部"
+          },
+          "value": "bottom"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "da": "Billede med tekst",
+        "de": "Foto mit Text",
+        "en": "Image with text",
+        "es": "Imagen con texto",
+        "fi": "Kuva tekstillä",
+        "fr": "Image avec texte",
+        "hi": "टेक्स्ट वाली इमेज",
+        "it": "Immagine con testo",
+        "ja": "テキスト付き画像",
+        "ko": "텍스트 포함 이미지",
+        "ms": "Imej dengan teks",
+        "nb": "Bilde med tekst",
+        "nl": "Afbeelding met tekst",
+        "pt-BR": "Imagem com texto",
+        "pt-PT": "Imagem com texto",
+        "sv": "Bild med text",
+        "th": "รูปภาพที่มีข้อความ",
+        "zh-CN": "带文本的图片",
+        "zh-TW": "附文字的圖片"
+      },
+      "category": {
+        "da": "Billede",
+        "de": "Foto",
+        "en": "Image",
+        "es": "Imagen",
+        "fi": "Kuva",
+        "fr": "Image",
+        "hi": "इमेज",
+        "it": "Immagine",
+        "ja": "画像",
+        "ko": "이미지",
+        "ms": "Imej",
+        "nb": "Bilde",
+        "nl": "Afbeelding",
+        "pt-BR": "Imagem",
+        "pt-PT": "Imagem",
+        "sv": "Bild",
+        "th": "รูปภาพ",
+        "zh-CN": "图片",
+        "zh-TW": "圖片"
+      }
+    }
+  ]
+}
+{% endschema %}

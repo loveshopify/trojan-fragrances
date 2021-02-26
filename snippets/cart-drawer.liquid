@@ -1,0 +1,206 @@
+{% if settings.show_cart_drawer and request.page_type != 'cart' %}
+<div class="drawer-cover"></div>
+<div class="drawer critical-hide" tabindex="-1" data-section-id="cart-drawer" data-section-type="cart-drawer" data-cart-token="{{ cart.id }}" data-drawer-push aria-hidden="true">
+
+  <form action="{{ routes.cart_url }}" method="post" novalidate class="cart-drawer{% if cart.items.size == 0 %} cart-drawer--empty{% endif %}">
+
+    <div class="cart-drawer__header">
+      <div class="cart-drawer__header-container">
+        <button type="button" class="cart-drawer__close-button btn btn--clear btn--square">
+          {% include 'icon-close' %}
+          <span class="icon__fallback-text">{{ 'cart.general.close_cart' | t }}</span>
+        </button>
+        <p class="cart-drawer__header-title text-title text-center">{{ 'cart.general.title' | t }}</p>
+      </div>
+    </div>
+
+    <div class="cart-drawer__content">
+      <div class="cart-drawer__content-container">
+
+        {% comment %}
+        Cart empty state
+        {% endcomment %}
+        <div class="cart-drawer__empty-text">
+          <p class="text-center">{{ 'cart.general.empty' | t }}</p>
+        </div>
+
+        {% comment %}
+        Cart no cookies state
+        {% endcomment %}
+        <div class="cart-drawer__no-cookies">
+          <p class="text-center">{{ 'cart.general.cookies_required' | t }}</p>
+        </div>
+
+        <div class="cart-drawer__item-list" data-cart-item-list>
+          {% comment %}
+          If the cart has no items, then include a item element with a template class
+          so that it is hidden but still available for use client-side by ajax-cart.js
+          {% endcomment %}
+
+          {%- assign cartItems = 'template ' | split: ' ' -%}
+          {% if cart.items.size > 0 %}
+            {%- assign cartItems = cart.items -%}
+          {% endif %}
+
+          {% for item in cartItems %}
+            <div class="cart-drawer__item{% if item == 'template' %} ajax-cart__template{% endif %}" data-cart-item data-cart-item-id="{{ item.key }}" aria-live="polite">
+
+              {% assign itemImage = true %}
+              {% if item.image == blank and item.product.featured_image == blank %}
+                {% assign itemImage = false %}
+              {% endif %}
+              <a href="{{ item.url }}" class="cart-drawer__item-image" style="background-image: {% if itemImage %}url('{{ item | img_url: 'medium' }}'){% else %}none{% endif %};" data-cart-item-background-image data-cart-item-href></a>
+
+              <div class="cart-drawer__item-content">
+                <a href="{{ item.url }}" class="h4 cart-drawer__item-title" data-cart-item-href data-cart-item-title>{{ item.product.title }}</a>
+                <p class="cart-drawer__item-subtitle" data-cart-item-variant-title>
+                  {% unless item.product.has_only_default_variant %}
+                    {{ item.variant.title }}
+                  {% endunless %}
+                </p>
+
+                <ul class="cart-drawer__item-properties" data-cart-item-property-list>
+                  {% comment %}
+                  If the item has no properties, then include a property element with a template class
+                  so that it is hidden but still available for use client-side by ajax-cart.js
+                  {% endcomment %}
+
+                  {%- assign itemProperties = 'template ' | split: ' ' -%}
+                  {%- assign property_size = item.properties | size -%}
+
+                  {% if property_size > 0 %}
+                    {%- assign itemProperties = item.properties -%}
+                  {% endif %}
+
+                  {% for p in itemProperties %}
+                    {% assign first_character_in_key = p.first | truncate: 1, '' %}
+                    {% unless p.last == blank or first_character_in_key == '_' %}
+                      <li class="cart-drawer__item-property{% if p == 'template' %} ajax-cart__template{% endif %}{% if p.last == blank %} visually-hidden{% endif %}" data-cart-item-property>
+                        {{ p.first }}:
+
+                        {% comment %}
+                        Check if there was an uploaded file associated
+                        {% endcomment %}
+                        {% if p.last contains '/uploads/' %}
+                          <a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
+                        {% else %}
+                          {{ p.last }}
+                        {% endif %}
+                      </li>
+                    {% endunless %}
+                  {% endfor %}
+                </ul>
+
+                <p class="cart-drawer__item-price-container" data-cart-item-price-container>
+                  {%- if item.original_price != item.final_price -%}
+                    <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+                    <del class="cart-item__original-price">{{ item.original_price | money }}</del>
+                    <span class="visually-hidden">{{ 'products.product.sale_price' | t }}</span>
+                    <span class="order-discount cart-item__price">{{ item.final_price | money }}</span>
+                  {%- else -%}
+                    <span class="cart-item__original-price cart-item__price">{{ item.original_price | money }}</span>
+                  {%- endif -%}
+                  {%- if item.variant.available and item.unit_price_measurement -%}
+                    {% include 'product-unit-price', variant: item, available: item.variant.available %}
+                  {%- endif -%}
+                </p>
+
+                {% comment %}
+                If the item has no discounts, then include a discount element with a template class
+                so that it is hidden but still available for use client-side by ajax-cart.js
+                {% endcomment %}
+
+                {%- assign itemDiscounts = 'template ' | split: ' ' -%}
+                {% if item.line_level_discount_allocations != blank %}
+                  {%- assign itemDiscounts = item.line_level_discount_allocations -%}
+                {% endif %}
+
+                <ul class="order-discount order-discount--list order-discount--title order-discount--cart" aria-label="{{ 'customer.order.discount' | t }}" data-cart-item-discount-list>
+                  {%- for discount_allocation in itemDiscounts -%}
+                    <li class="order-discount__item{% if discount_allocation == 'template' %} ajax-cart__template{% endif %}" data-cart-item-discount>
+                      {%- include 'icon-saletag' -%}<span data-cart-item-discount-title>{{ discount_allocation.discount_application.title }}</span> (-<span data-cart-item-discount-amount>{{ discount_allocation.amount | money }}</span>)
+                    </li>
+                  {%- endfor -%}
+                </ul>
+
+                <button class="cart-drawer__item-delete btn-link" type="button" data-cart-item-delete>{{ 'cart.general.remove' | t }}</button>
+
+                <label for="quantity_{{ item.key }}" class="label--hidden" data-cart-item-label-quantity>{{ 'cart.general.item_quantity' | t }}</label>
+                <input id="quantity_{{ item.key }}" class="cart-drawer__item-quantity" value="{{ item.quantity }}" type="number" pattern="\d*" min="1" aria-label="{{ 'cart.general.item_quantity' | t }}" data-cart-item-input-quantity>
+
+              </div>
+              <p class="cart-item__message text-center" aria-hidden="true" data-item-message></p>
+            </div>
+          {% endfor %}
+
+          {% if settings.show_cart_note %}
+            <div class="cart-drawer__item cart-drawer__note-container" data-cart-note-container>
+              <label for="CartSpecialInstructions">{{ 'cart.general.note' | t }}</label>
+              <textarea name="note" class="cart-drawer__note" data-cart-note>{{ cart.note }}</textarea>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+
+    <div class="cart-drawer__footer">
+      <div class="cart-drawer__footer-container">
+        <div class="cart-drawer__message-container">
+          <div class="cart-drawer__message" data-cart-message></div>
+        </div>
+
+        {% comment %}
+        If the cart has no discount, then include a discount element with a template class
+        so that it is hidden but still available for use client-side by ajax-cart.js
+        {% endcomment %}
+
+        {%- assign cartDiscounts = 'template ' | split: ' ' -%}
+        {% if cart.cart_level_discount_applications.size > 0 %}
+          {%- assign cartDiscounts = cart.cart_level_discount_applications -%}
+        {% endif %}
+
+        <div data-cart-discount-container>
+          {%- for discount_application in cartDiscounts -%}
+            <div class="order-discount-cart-drawer-wrapper{% if discount_application == 'template' %} ajax-cart__template{% endif %}" data-cart-discount>
+              <span class="order-discount order-discount--title order-discount--cart-title">
+                {%- include 'icon-saletag' -%}<span class="visually-hidden">{{ 'customer.order.discount' | t }}:</span><span data-cart-discount-title>{{- discount_application.title -}}</span>
+              </span>
+              <span class="order-discount order-discount--cart-price">-<span data-cart-discount-amount>{{ discount_application.total_allocated_amount | money }}</span></span>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <div class="cart-drawer__subtotal" aria-live="polite">
+          <div class="cart-drawer__subtotal-label">
+            <span class="h4">{{ 'cart.general.subtotal' | t }}</span>
+          </div>
+          <div class="cart-drawer__subtotal-price">
+            <span class="cart-drawer__subtotal-number" data-cart-subtotal>{{ cart.total_price | money }}</span>
+          </div>
+        </div>
+
+        {%- capture taxes_shipping_checkout -%}
+          {%- if shop.taxes_included and shop.shipping_policy.body != blank -%}
+            {{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+          {%- elsif shop.taxes_included -%}
+            {{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
+          {%- elsif shop.shipping_policy.body != blank -%}
+            {{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+          {%- else -%}
+            {{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
+          {%- endif -%}
+        {%- endcapture -%}
+
+        <p class="cart-drawer__disclaimer rte">{{ taxes_shipping_checkout }}</p>
+
+        <button type="submit" class="btn btn--loader cart-drawer__checkout" name="checkout" data-cart-submit{% if cart.items.size == 0 %} disabled{% endif %}>
+          {{ 'cart.general.checkout' | t }}
+          <span class="btn--loader-balls"></span>
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>
+{% endif %}

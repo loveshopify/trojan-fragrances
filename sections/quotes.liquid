@@ -1,0 +1,455 @@
+<style>
+  #QuotesSection-{{ section.id }} .quotes-slider {
+    background-color: {{ section.settings.color_bg }};
+  }
+  #QuotesSection-{{ section.id }} .quote,
+  #QuotesSection-{{ section.id }} .quote__author,
+  #QuotesSection-{{ section.id }} .quote__heading {
+    color: {{ section.settings.color_text }};
+  }
+</style>
+
+{% if section.blocks.size > 0 %}
+  <div id="QuotesSection-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="quotes-section">
+    <div class="quotes-slider text-center" data-count="{{ section.blocks.size }}" data-speed="{{ section.settings.autoplay_speed }}">
+      {% for block in section.blocks %}
+        <div class="quotes-slide quotes-slide--{{ forloop.index0 }} quotes-slide--{{ block.id }}{% if forloop.first == true %} quotes-slide--visible{% endif %}" {{ block.shopify_attributes }}>
+          {% if block.settings.heading != blank %}
+            <h2 class="quote__heading">{{ block.settings.heading | escape }}</h2>
+          {% endif %}
+          {% if block.settings.quote != blank %}
+            <div class="h4 quote rte-setting">{{ block.settings.quote }}</div>
+          {% endif %}
+          {% if block.settings.author != blank %}
+            <span class="quote__author">{{ block.settings.author | escape }}</span>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% else %}
+  {% include 'no-blocks' %}
+{% endif %}
+
+{% schema %}
+{
+  "name": {
+    "da": "Udtalelser",
+    "de": "Testimonials",
+    "en": "Testimonials",
+    "es": "Testimonios",
+    "fi": "Suositukset",
+    "fr": "Témoignages",
+    "hi": "प्रमाणपत्र",
+    "it": "Testimonial",
+    "ja": "お客様の声",
+    "ko": "추천",
+    "ms": "Testimoni",
+    "nb": "Tilbakemeldinger fra kunder",
+    "nl": "Getuigenissen",
+    "pt-BR": "Depoimentos",
+    "pt-PT": "Testemunhos",
+    "sv": "Kundberättelser",
+    "th": "เสียงชื่นชมจากลูกค้า",
+    "zh-CN": "感言",
+    "zh-TW": "推薦文"
+  },
+  "class": "index-section index-section--quotes",
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "color",
+      "id": "color_bg",
+      "label": {
+        "da": "Baggrundsfarve",
+        "de": "Hintergrundfarbe",
+        "en": "Background color",
+        "es": "Color del fondo",
+        "fi": "Taustaväri",
+        "fr": "Couleur de fond",
+        "hi": "पृष्ठभूमि का रंग",
+        "it": "Colore sfondo",
+        "ja": "背景の色",
+        "ko": "배경색",
+        "ms": "Warna latar belakang",
+        "nb": "Bakgrunnsfarge",
+        "nl": "Achtergrondkleur",
+        "pt-BR": "Cor do fundo",
+        "pt-PT": "Cor do fundo",
+        "sv": "Bakgrundsfärg",
+        "th": "สีพื้นหลัง",
+        "zh-CN": "背景色",
+        "zh-TW": "背景顏色"
+      },
+      "default": "#4a4a4a"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": {
+        "da": "Tekstfarve",
+        "de": "Textfarbe",
+        "en": "Text color",
+        "es": "Color de la fuente",
+        "fi": "Tekstin väri",
+        "fr": "Couleur du texte",
+        "hi": "टेक्स्ट का रंग",
+        "it": "Colore del testo",
+        "ja": "文字の色",
+        "ko": "텍스트 색상",
+        "ms": "Warna teks",
+        "nb": "Tekstfarge",
+        "nl": "Tekstkleur",
+        "pt-BR": "Cor do texto",
+        "pt-PT": "Cor do texto",
+        "sv": "Textfärg",
+        "th": "สีข้อความ",
+        "zh-CN": "文本颜色",
+        "zh-TW": "文字顏色"
+      },
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "autoplay_speed",
+      "label": {
+        "da": "Skift slide hver",
+        "de": "Slides überall ändern",
+        "en": "Change slides every",
+        "es": "Cambiar diapositivas cada",
+        "fi": "Vaihda diat joka",
+        "fr": "Changer de diapositive toutes les",
+        "hi": "प्रत्येक स्लाइड बदलें",
+        "it": "Cambia slide ogni",
+        "ja": "スライドを変更する間隔",
+        "ko": "슬라이드를 매번 변경",
+        "ms": "Ubah slaid setiap",
+        "nb": "Endre lysbilde hvert",
+        "nl": "Wijzig dia's elke",
+        "pt-BR": "Mude os slides a cada",
+        "pt-PT": "Mudar diapositivos a cada",
+        "sv": "Byt bilder varje",
+        "th": "เปลี่ยนสไลด์ทุก",
+        "zh-CN": "幻灯片更改时间间隔",
+        "zh-TW": "每過以下時間即變更投影片"
+      },
+      "options": [
+        {
+          "value": "3000",
+          "label": {
+            "da": "3 sekunder",
+            "de": "3 Sekunden",
+            "en": "3 seconds",
+            "es": "3 segundos",
+            "fi": "3 sekuntia",
+            "fr": "3 secondes",
+            "hi": "3 सेकंड",
+            "it": "3 secondi",
+            "ja": "3秒",
+            "ko": "3초",
+            "ms": "3 saat",
+            "nb": "3 sekunder",
+            "nl": "3 seconden",
+            "pt-BR": "3 segundos",
+            "pt-PT": "3 segundos",
+            "sv": "5 sekunder",
+            "th": "3 วินาที",
+            "zh-CN": "3 秒",
+            "zh-TW": "3 秒"
+          }
+        },
+        {
+          "value": "4000",
+          "label": {
+            "da": "4 sekunder",
+            "de": "4 Sekunden",
+            "en": "4 seconds",
+            "es": "4 segundos",
+            "fi": "4 sekuntia",
+            "fr": "4 secondes",
+            "hi": "4 सेकंड",
+            "it": "4 secondi",
+            "ja": "4秒",
+            "ko": "4초",
+            "ms": "4 saat",
+            "nb": "4 sekunder",
+            "nl": "4 seconden",
+            "pt-BR": "4 segundos",
+            "pt-PT": "4 segundos",
+            "sv": "15 sekunder",
+            "th": "4 วินาที",
+            "zh-CN": "4 秒",
+            "zh-TW": "4 秒"
+          }
+        },
+        {
+          "value": "5000",
+          "label": {
+            "da": "5 sekunder",
+            "de": "5 Sekunden",
+            "en": "5 seconds",
+            "es": "5 segundos",
+            "fi": "5 sekuntia",
+            "fr": "5 secondes",
+            "hi": "5 सेकंड",
+            "it": "5 secondi",
+            "ja": "5秒",
+            "ko": "5초",
+            "ms": "5 saat",
+            "nb": "5 sekunder",
+            "nl": "5 seconden",
+            "pt-BR": "5 segundos",
+            "pt-PT": "5 segundos",
+            "sv": "5 sekunder",
+            "th": "5 วินาที",
+            "zh-CN": "5 秒",
+            "zh-TW": "5 秒"
+          }
+        },
+        {
+          "value": "6000",
+          "label": {
+            "da": "6 sekunder",
+            "de": "6 Sekunden",
+            "en": "6 seconds",
+            "es": "6 segundos",
+            "fi": "6 sekuntia",
+            "fr": "6 secondes",
+            "hi": "6 सेकंड",
+            "it": "6 secondi",
+            "ja": "6秒",
+            "ko": "6초",
+            "ms": "6 saat",
+            "nb": "6 sekunder",
+            "nl": "6 seconden",
+            "pt-BR": "6 segundos",
+            "pt-PT": "7 segundos",
+            "sv": "15 sekunder",
+            "th": "6 วินาที",
+            "zh-CN": "6 秒",
+            "zh-TW": "6 秒"
+          }
+        }
+      ],
+      "default": "4000"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "quote",
+      "name": {
+        "da": "Udtalelse",
+        "de": "Testimonial",
+        "en": "Testimonial",
+        "es": "Testimonio",
+        "fi": "Suositukset",
+        "fr": "Témoignages",
+        "hi": "प्रमाणपत्र",
+        "it": "Testimonial",
+        "ja": "お客様の声",
+        "ko": "추천",
+        "ms": "Testimoni",
+        "nb": "Anbefaling",
+        "nl": "Testimonial",
+        "pt-BR": "Depoimento",
+        "pt-PT": "Testemunho",
+        "sv": "Kundberättelser",
+        "th": "เสียงชื่นชมจากลูกค้า",
+        "zh-CN": "感言",
+        "zh-TW": "推薦文"
+      },
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": {
+            "da": "Overskrift",
+            "de": "Titel",
+            "en": "Heading",
+            "es": "Título",
+            "fi": "Otsake",
+            "fr": "Titre",
+            "hi": "शीर्षक",
+            "it": "Heading",
+            "ja": "見出し",
+            "ko": "제목",
+            "ms": "Tajuk",
+            "nb": "Overskrift",
+            "nl": "Kop",
+            "pt-BR": "Título",
+            "pt-PT": "Título",
+            "sv": "Rubrik",
+            "th": "ส่วนหัว",
+            "zh-CN": "标题",
+            "zh-TW": "標題"
+          }
+        },
+        {
+          "type": "richtext",
+          "id": "quote",
+          "label": {
+            "da": "Tekst",
+            "de": "Text",
+            "en": "Text",
+            "es": "Texto",
+            "fi": "Teksti",
+            "fr": "Texte",
+            "hi": "टेक्स्ट",
+            "it": "Testo",
+            "ja": "テキスト",
+            "ko": "텍스트",
+            "ms": "Teks",
+            "nb": "Tekst",
+            "nl": "Tekst",
+            "pt-BR": "Texto",
+            "pt-PT": "Texto",
+            "sv": "Text",
+            "th": "ข้อความ",
+            "zh-CN": "文本",
+            "zh-TW": "文字"
+          },
+          "info": {
+            "da": "De bedste resultater opnås, hvis teksten holdes under 400 tegn",
+            "de": "Beste Ergebnisse, wenn der Text 400 Zeichen nicht überschreitet",
+            "en": "Best results if text does not exceed 400 characters",
+            "es": "Se obtienen mejores resultados si el texto no supera los 400 caracteres.",
+            "fi": "Parhaat tulokset saadaan, kun tekstin pituus ei ylitä 400 merkkiä",
+            "fr": "Vous obtiendrez de meilleurs résultats si le texte ne dépasse pas 400 caractères",
+            "hi": "सर्वश्रेष्ठ परिणाम यदि पाठ 400 वर्णों से अधिक नहीं है",
+            "it": "Ottieni i migliori risultati se il testo non supera i 400 caratteri",
+            "ja": "テキストが400文字を超えないようにするのが最適です。",
+            "ko": "텍스트가 400자를 초과하지 않는 경우 최상의 결과",
+            "ms": "Hasil terbaik jika teks tidak melebihi 400 aksara",
+            "nb": "Best resultat hvis teksten ikke overskrider 400 tegn",
+            "nl": "U krijgt de beste resultaten met een tekst van minder dan 400 tekens",
+            "pt-BR": "Resultados melhores quando o texto não excede 400 caracteres",
+            "pt-PT": "Melhores resultados quando o texto não excede 400 caracteres",
+            "sv": "Bäst resultat om texten inte överstiger 400 tecken",
+            "th": "แสดงผลดีที่สุดหากข้อความมีความยาวไม่เกิน 400 ตัวอักษร",
+            "zh-CN": "文本不超过 400 个字符时效果最佳",
+            "zh-TW": "字數少於 400 字元效果最佳"
+          },
+          "default": {
+            "da": "<p>Tilføj kundeanmeldelser og udtalelser for at fremhæve din butiks tilfredse kunder.</p>",
+            "de": "<p>Kunden-Reviews und Testimonials, die Kundenzufriedenheit beweisen.</p>",
+            "en": "<p>Add customer reviews and testimonials to showcase your store's happy customers.</p>",
+            "es": "<p>Agrega las reseñas y los testimonios de los clientes para mostrar los clientes satisfechos de tu tienda.</p>",
+            "fi": "<p>Lisää asiakasarviointeja ja suositteluja kertoaksesi kaupan tyytyväisistä asiakkaista.</p>",
+            "fr": "<p>Ajoutez des avis et témoignages pour mettre en avant les clients satisfaits de votre boutique.</p>",
+            "hi": "<p>अपने स्टोर के खुश ग्राहकों को दिखाने के लिए ग्राहक समीक्षा और प्रशंसापत्र जोड़ें.</p>",
+            "it": "<p>Aggiungi recensioni e testimonianze sul tuo negozio per dimostrare che i clienti sono soddisfatti.</p>",
+            "ja": "<p>あなたのストアの幸せなお客様を紹介するために、カスタマーレビューとお客様の声を追加してください。</p>",
+            "ko": "<p>고객 리뷰 및 추천을 추가하여 스토어에 만족한 고객을 보여주십시오.</p>",
+            "ms": "<p>Tambah ulasan dan testimoni pelanggan untuk menunjukkan pelanggan gembira kedai anda.</p>",
+            "nb": "<p>Legg til kundeomtaler og anbefalinger for å vise frem butikkens glade kunder.</p>",
+            "nl": "<p>Voeg beoordelingen van klanten en testimonials toe om te laten zien dat je klanten tevreden zijn.</p>",
+            "pt-BR": "<p>Adicione avaliações e depoimentos de clientes para mostrar os clientes felizes da sua loja.</p>",
+            "pt-PT": "<p>Adicione análises e testemunhos de clientes felizes da sua loja.</p>",
+            "sv": "<p>Lägg till kundrecensioner och berättelser för att visa upp din butiks nöjda kunder.</p>",
+            "th": "<p>เพิ่มรีวิวและเสียงชื่นชมจากลูกค้าเพื่อนำเสนอลูกค้าที่ได้รับความสุขจากร้านค้า</p>",
+            "zh-CN": "<p>添加客户评论和感言，以展示对您的商店满意的客户。</p>",
+            "zh-TW": "<p>加上顧客評論及推薦文，以便展示您商店的滿意顧客。</p>"
+          }
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": {
+            "da": "Forfatter",
+            "de": "Autor",
+            "en": "Author",
+            "es": "Autor",
+            "fi": "Kirjoittaja",
+            "fr": "Auteur",
+            "hi": "लेखक",
+            "it": "Autore",
+            "ja": "執筆者",
+            "ko": "작성자",
+            "ms": "Pengarang",
+            "nb": "Forfatter",
+            "nl": "Auteur",
+            "pt-BR": "Autoria",
+            "pt-PT": "Autor",
+            "sv": "Författare",
+            "th": "ผู้เขียน",
+            "zh-CN": "作者",
+            "zh-TW": "作者"
+          },
+          "default": {
+            "da": "Forfatterens navn",
+            "de": "Name des Autors",
+            "en": "Author's name",
+            "es": "Nombre del autor",
+            "fi": "Kirjoittajan nimi",
+            "fr": "Nom de l'auteur",
+            "hi": "लेखक का नाम",
+            "it": "Nome dell'autore",
+            "ja": "筆者の名前",
+            "ko": "작성자 이름",
+            "ms": "Nama pengarang",
+            "nb": "Forfatterens navn",
+            "nl": "Naam auteur",
+            "pt-BR": "Nome do autor",
+            "pt-PT": "Nome do autor",
+            "sv": "Författarens namn",
+            "th": "ชื่อผู้เขียน",
+            "zh-CN": "作者姓名",
+            "zh-TW": "作者名稱"
+          }
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "da": "Udtalelser",
+        "de": "Testimonials",
+        "en": "Testimonials",
+        "es": "Testimonios",
+        "fi": "Suositukset",
+        "fr": "Témoignages",
+        "hi": "प्रमाणपत्र",
+        "it": "Testimonial",
+        "ja": "お客様の声",
+        "ko": "추천",
+        "ms": "Testimoni",
+        "nb": "Tilbakemeldinger fra kunder",
+        "nl": "Getuigenissen",
+        "pt-BR": "Depoimentos",
+        "pt-PT": "Testemunhos",
+        "sv": "Kundberättelser",
+        "th": "เสียงชื่นชมจากลูกค้า",
+        "zh-CN": "感言",
+        "zh-TW": "推薦文"
+      },
+      "category": {
+        "da": "Tekst",
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fi": "Teksti",
+        "fr": "Texte",
+        "hi": "टेक्स्ट",
+        "it": "Testo",
+        "ja": "テキスト",
+        "ko": "텍스트",
+        "ms": "Teks",
+        "nb": "Tekst",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "pt-PT": "Texto",
+        "sv": "Text",
+        "th": "ข้อความ",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      },
+      "blocks": [
+        {
+          "type": "quote"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

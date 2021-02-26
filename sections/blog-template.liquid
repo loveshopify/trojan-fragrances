@@ -1,0 +1,393 @@
+{%- assign limit = section.settings.articles | times: section.settings.rows -%}
+
+<div class="blog-template" data-section-id="{{ section.id }}" data-section-type="blog-template">
+  {% paginate blog.articles by limit %}
+
+    <div class="page-width">
+      <header class="section-header section-header--small text-center">
+        <h1 class="section-header__title h2">{{ page_title }}</h1>
+      </header>
+
+      {%- assign desktopColumns = section.settings.articles -%}
+      {%- assign mobileColumns = '1' -%}
+
+      {%- capture gridClasses -%}
+        {% if desktopColumns == '3' %}medium-up--one-third {% else %}medium-up--one-half {% endif %}
+        {% if mobileColumns == '2' %}small--one-half {% endif %}
+      {%- endcapture -%}
+
+      <div class="card-list grid" data-desktop-columns="{{ desktopColumns }}" data-mobile-columns="{{ mobileColumns }}" data-grid-style="{{ section.settings.grid_style }}">
+        <div class="card-list__column grid__item {% if blog.articles.size == 1 %}card-list__column--center{% endif %} {{ gridClasses }}">
+          {% for article in blog.articles %}
+            {% include 'article-card', article: article, grid_style: section.settings.grid_style %}
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if blog.articles.size == 0 %}
+        <p class="text-center">{{ 'blogs.article.no_matches' | t }}</p>
+      {% endif %}
+
+      {% if paginate.pages > 1 %}
+        <div class="card-list__sub-actions">
+          {% include 'pagination' %}
+        </div>
+      {% endif %}
+    </div>
+
+  {% endpaginate %}
+</div>
+
+{% schema %}
+{
+  "name": {
+    "da": "Blog",
+    "de": "Blog",
+    "en": "Blog",
+    "es": "Blog",
+    "fi": "Blogi",
+    "fr": "Blog",
+    "hi": "ब्लॉग",
+    "it": "Blog",
+    "ja": "ブログ",
+    "ko": "블로그",
+    "ms": "Blog",
+    "nb": "Blogg",
+    "nl": "Blog",
+    "pt-BR": "Blog",
+    "pt-PT": "Blogue",
+    "sv": "Blogg",
+    "th": "บล็อก",
+    "zh-CN": "博客",
+    "zh-TW": "部落格"
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "grid_style",
+      "label": {
+        "da": "Gittertypografi",
+        "de": "Rasterstil",
+        "en": "Grid style",
+        "es": "Estilo de cuadrícula",
+        "fi": "Ruudukon tyyli",
+        "fr": "Style de grille",
+        "hi": "ग्रिड स्टाइल",
+        "it": "Stile griglia",
+        "ja": "グリッドスタイル",
+        "ko": "그리드 스타일",
+        "ms": "Gaya grid",
+        "nb": "Rutenettstil",
+        "nl": "Rasterstijl",
+        "pt-BR": "Estilo da grade",
+        "pt-PT": "Estilo de grelha",
+        "sv": "Rutnätsstil",
+        "th": "รูปแบบกริด",
+        "zh-CN": "网格样式",
+        "zh-TW": "網格樣式"
+      },
+      "default": "collage",
+      "options": [
+        {
+          "value": "collage",
+          "label": {
+            "da": "Collage",
+            "de": "Collage",
+            "en": "Collage",
+            "es": "Collage",
+            "fi": "Kollaasi",
+            "fr": "Collage",
+            "hi": "कोलाज",
+            "it": "Collage",
+            "ja": "コラージュ",
+            "ko": "콜라주",
+            "ms": "Kolaj",
+            "nb": "Fotomontasje",
+            "nl": "Collage",
+            "pt-BR": "Colagem",
+            "pt-PT": "Colagem",
+            "sv": "Kollage",
+            "th": "ภาพตัดแปะ",
+            "zh-CN": "拼贴画",
+            "zh-TW": "拼貼"
+          }
+        },
+        {
+          "value": "grid",
+          "label": {
+            "da": "Gitter",
+            "de": "Raster",
+            "en": "Grid",
+            "es": "Cuadrícula",
+            "fi": "Ruudukko",
+            "fr": "Grille",
+            "hi": "ग्रिड",
+            "it": "Griglia",
+            "ja": "グリッド",
+            "ko": "그리드",
+            "ms": "Grid",
+            "nb": "Rutenett",
+            "nl": "Raster",
+            "pt-BR": "Grade",
+            "pt-PT": "Grelha",
+            "sv": "Rutnät",
+            "th": "กริด",
+            "zh-CN": "网格",
+            "zh-TW": "網格"
+          }
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "articles",
+      "label": {
+        "da": "Artikler pr. række",
+        "de": "Artikel pro Zeile",
+        "en": "Articles per row",
+        "es": "Artículos por fila",
+        "fi": "Artikkeleita per rivi",
+        "fr": "Articles par rangée",
+        "hi": "लेख प्रति पंक्ति",
+        "it": "Articoli per riga",
+        "ja": "行あたりの記事数",
+        "ko": "열 별 기사",
+        "ms": "Artikel setiap baris",
+        "nb": "Artikler per rad",
+        "nl": "Artikelen per rij",
+        "pt-BR": "Artigos por linha",
+        "pt-PT": "Artigos por linha",
+        "sv": "Artiklar per rad",
+        "th": "บทความต่อแถว",
+        "zh-CN": "每行文章数",
+        "zh-TW": "每列文章數"
+      },
+      "default": "2",
+      "options": [
+        {
+          "value": "2",
+          "label": {
+            "da": "2",
+            "de": "2",
+            "en": "2",
+            "es": "2",
+            "fi": "2",
+            "fr": "2",
+            "hi": "2",
+            "it": "2",
+            "ja": "2",
+            "ko": "2",
+            "ms": "2",
+            "nb": "2",
+            "nl": "2",
+            "pt-BR": "2",
+            "pt-PT": "2",
+            "sv": "2",
+            "th": "2",
+            "zh-CN": "2",
+            "zh-TW": "2"
+          }
+        },
+        {
+          "value": "3",
+          "label": {
+            "da": "3",
+            "de": "3",
+            "en": "3",
+            "es": "3",
+            "fi": "3",
+            "fr": "3",
+            "hi": "3",
+            "it": "3",
+            "ja": "3",
+            "ko": "3",
+            "ms": "3",
+            "nb": "3",
+            "nl": "3",
+            "pt-BR": "3",
+            "pt-PT": "3",
+            "sv": "3",
+            "th": "3",
+            "zh-CN": "3",
+            "zh-TW": "3"
+          }
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "rows",
+      "label": {
+        "da": "Rækker pr. side",
+        "de": "Zeilen pro Seite",
+        "en": "Rows per page",
+        "es": "Filas por página",
+        "fi": "Rivejä per sivu",
+        "fr": "Rangées par page",
+        "hi": "प्रति पृष्ठ पंक्तियां",
+        "it": "Righe per pagina",
+        "ja": "ページあたりの行数",
+        "ko": "페이지 별 열",
+        "ms": "Baris setiap halaman",
+        "nb": "Rader per side",
+        "nl": "Rijen per pagina",
+        "pt-BR": "Linhas por página",
+        "pt-PT": "Linhas por página",
+        "sv": "Rader per sida",
+        "th": "แถวต่อหน้า",
+        "zh-CN": "每页行数",
+        "zh-TW": "每頁列數"
+      },
+      "default": "4",
+      "options": [
+        {
+          "value": "2",
+          "label": {
+            "da": "2",
+            "de": "2",
+            "en": "2",
+            "es": "2",
+            "fi": "2",
+            "fr": "2",
+            "hi": "2",
+            "it": "2",
+            "ja": "2",
+            "ko": "2",
+            "ms": "2",
+            "nb": "2",
+            "nl": "2",
+            "pt-BR": "2",
+            "pt-PT": "2",
+            "sv": "2",
+            "th": "2",
+            "zh-CN": "2",
+            "zh-TW": "2"
+          }
+        },
+        {
+          "value": "3",
+          "label": {
+            "da": "3",
+            "de": "3",
+            "en": "3",
+            "es": "3",
+            "fi": "3",
+            "fr": "3",
+            "hi": "3",
+            "it": "3",
+            "ja": "3",
+            "ko": "3",
+            "ms": "3",
+            "nb": "3",
+            "nl": "3",
+            "pt-BR": "3",
+            "pt-PT": "3",
+            "sv": "3",
+            "th": "3",
+            "zh-CN": "3",
+            "zh-TW": "3"
+          }
+        },
+        {
+          "value": "4",
+          "label": {
+            "da": "4",
+            "de": "4",
+            "en": "4",
+            "es": "4",
+            "fi": "4",
+            "fr": "4",
+            "hi": "4",
+            "it": "4",
+            "ja": "4",
+            "ko": "4",
+            "ms": "4",
+            "nb": "4",
+            "nl": "4",
+            "pt-BR": "4",
+            "pt-PT": "4",
+            "sv": "4",
+            "th": "4",
+            "zh-CN": "4",
+            "zh-TW": "4"
+          }
+        },
+        {
+          "value": "5",
+          "label": {
+            "da": "5",
+            "de": "5",
+            "en": "5",
+            "es": "5",
+            "fi": "5",
+            "fr": "5",
+            "hi": "5",
+            "it": "5",
+            "ja": "5",
+            "ko": "5",
+            "ms": "5",
+            "nb": "5",
+            "nl": "5",
+            "pt-BR": "5",
+            "pt-PT": "5",
+            "sv": "5",
+            "th": "5",
+            "zh-CN": "5",
+            "zh-TW": "5"
+          }
+        },
+        {
+          "value": "6",
+          "label": {
+            "da": "6",
+            "de": "6",
+            "en": "6",
+            "es": "6",
+            "fi": "6",
+            "fr": "6",
+            "hi": "6",
+            "it": "6",
+            "ja": "6",
+            "ko": "6",
+            "ms": "6",
+            "nb": "6",
+            "nl": "6",
+            "pt-BR": "6",
+            "pt-PT": "6",
+            "sv": "6",
+            "th": "6",
+            "zh-CN": "6",
+            "zh-TW": "6"
+          }
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_show_date",
+      "label": {
+        "da": "Vis dato",
+        "de": "Datum anzeigen",
+        "en": "Show date",
+        "es": "Mostrar fecha",
+        "fi": "Näytä päivämäärä",
+        "fr": "Afficher la date",
+        "hi": "दिनांक दिखाएं",
+        "it": "Mostra data",
+        "ja": "日付を表示する",
+        "ko": "날짜 표시",
+        "ms": "Tunjukkan tarikh",
+        "nb": "Vis dato",
+        "nl": "Datum weergeven",
+        "pt-BR": "Exibir data",
+        "pt-PT": "Mostrar data",
+        "sv": "Visa datum",
+        "th": "แสดงวันที่",
+        "zh-CN": "显示日期",
+        "zh-TW": "顯示日期"
+      },
+      "default": true
+    }
+  ]
+}
+{% endschema %}
